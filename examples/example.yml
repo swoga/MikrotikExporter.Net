@@ -1,0 +1,57 @@
+global:
+  username: admin
+  password: admin
+  module_folder: modules # absolute path to folder or relative to this file
+
+targets:
+  router1:
+    host: 192.168.88.1
+    modules: [interface, resource] # modules used if ?module=xxx is omitted from the scrape request
+    discover_labels:
+      label1: value1
+
+modules:
+  resource: # name of the module
+    # each module can contain multiple commands which get executed on every scrape
+    - command: /system/resource/print
+      metrics:
+        - name: uptime # name of the parameter in the MikroTik API
+          param_type: timespan # how to parse the value
+          metric_type: counter # type of prometheus metric
+          help: Uptime of the Device
+        - name: total-memory
+          metric_name: total_memory # overwrite the name of the metric, if omitted the name of the parameter is used
+          param_type: int
+          metric_type: gauge
+          help: Total RAM
+        - name: free-memory
+          metric_name: free_memory
+          param_type: int
+          metric_type: gauge
+          help: Free RAM
+        - name: cpu-count
+          metric_name: cpu_count
+          param_type: int
+          metric_type: gauge
+          help: Number of CPU cores
+        - name: cpu-load
+          metric_name: cpu_load
+          param_type: int
+          metric_type: gauge
+          help: Total CPU usage
+        - name: free-hdd-space
+          metric_name: free_hdd_space
+          param_type: int
+          metric_type: gauge
+        - name: total-hdd-space
+          metric_name: total_hdd_space
+          param_type: int
+          metric_type: gauge
+        - name: write-sect-since-reboot
+          metric_name: sector_writes_since_reboot
+          param_type: int
+          metric_type: counter
+        - name: write-sect-total
+          metric_name: sector_writes_total
+          param_type: int
+          metric_type: counter

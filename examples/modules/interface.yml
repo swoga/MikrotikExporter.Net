@@ -1,0 +1,52 @@
+modules:
+  interface:
+    # the command can also be a query https://wiki.mikrotik.com/wiki/Manual:API#Queries
+    - command: |-
+        /interface/print
+        ?=type=ether
+
+      labels: # labels defined here get attached to all metrics
+        - name: name # name of the parameter in the MikroTik API
+          param_type: string # how to parse the value
+        - name: type
+          param_type: string
+          label_name: interface_type # overwrite the name of the label, if omitted the name of the parameter is used
+      metrics:
+        - name: disabled
+          metric_type: gauge
+          metric_name: enabled
+          param_type: bool
+          negate: true # negates the returned value
+        - name: running
+          metric_type: gauge
+          param_type: bool
+        - name: tx-byte
+          metric_name: tx_byte
+          metric_type: counter
+          param_type: int
+        - name: rx-byte
+          metric_name: rx_byte
+          metric_type: counter
+          param_type: int
+        - name: tx-packet
+          metric_name: tx_packet
+          metric_type: counter
+          param_type: int
+        - name: rx-packet
+          metric_name: rx_packet
+          metric_type: counter
+          param_type: int
+        - name: link-downs
+          metric_name: link_downs
+          metric_type: counter
+          param_type: int
+        - name: last-link-down-time
+          metric_name: last_link_down
+          metric_type: gauge
+          param_type: datetime # datetimes are parsed and a duration from/to now is calculated
+          datetime_type: fromnow # choose "fromnow" if the datetime is in the past, "tonow" if the datetime is in the future
+        - name: last-link-up-time
+          metric_name: last_link_up
+          metric_type: gauge
+          param_type: datetime
+          datetime_type: fromnow
