@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MikrotikExporter": {
+      "commandName": "Project",
+      "commandLineArgs": "-c \"..\\..\\..\\..\\examples\\example.yml\" -vv"
+    }
+  }
+}
