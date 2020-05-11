@@ -1,0 +1,41 @@
+modules:
+  resource:
+    - command: /system/resource/print
+      metrics:
+        - name: uptime
+          param_type: timespan
+          metric_type: counter
+        - name: total-memory
+          param_type: int
+          metric_type: gauge
+        - name: free-memory
+          param_type: int
+          metric_type: gauge
+        - name: cpu-count
+          param_type: int
+          metric_type: gauge
+        - name: cpu-load
+          metric_name: cpu_load_total
+          param_type: int
+          metric_type: gauge
+        - name: free-hdd-space
+          param_type: int
+          metric_type: gauge
+        - name: total-hdd-space
+          param_type: int
+          metric_type: gauge
+        - name: write-sect-since-reboot
+          param_type: int
+          metric_type: counter
+        - name: write-sect-total
+          param_type: int
+          metric_type: counter
+    - command: /system/resource/cpu/print
+      labels:
+        - name: cpu
+          param_type: string
+      metrics:
+        - name: load
+          metric_name: cpu_load
+          param_type: int
+          metric_type: gauge
