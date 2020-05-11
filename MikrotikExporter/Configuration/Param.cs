@@ -29,7 +29,11 @@ namespace MikrotikExporter.Configuration
         /// <summary>
         /// e.g. may/03/2020 17:41:00
         /// </summary>
-        DateTime
+        DateTime,
+        /// <summary>
+        /// For string to value mapping (e.g. psu-state: ok, fail)
+        /// </summary>
+        Enum
     }
 
     public enum DateTimeType
@@ -68,6 +72,9 @@ namespace MikrotikExporter.Configuration
         /// </summary>
         [YamlMember(Alias = "default")]
         public string Default { get; set; }
+
+        [YamlMember(Alias="enum_values")]
+        public Dictionary<string, double> EnumValues {get; set; }
 
         private static readonly Regex regexTimepan = new Regex(@"(?:(\d+)(w))?(?:(\d+)(d))?(?:(\d+)(h))?(?:(\d+)(m))?(?:(\d+)(s))?", RegexOptions.Compiled);
 
@@ -150,6 +157,11 @@ namespace MikrotikExporter.Configuration
                         else
                         {
                             log.Error($"failed to parse DateTime '{word}' from '{Name}'");
+                        }
+                        break;
+                    case ParamType.Enum:
+                        if (EnumValues.TryGetValue(word, out value)) {
+                            return true;
                         }
                         break;
                 }
