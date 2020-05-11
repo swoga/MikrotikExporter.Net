@@ -1,0 +1,58 @@
+modules:
+  health:
+    - command: /system/health/print
+      metrics:
+        - name: cpu-temperature
+          param_type: int
+          metric_type: gauge
+        - name: power-consumption
+          param_type: int
+          metric_type: gauge
+        - name: board-temperature1
+          param_type: int
+          metric_type: gauge
+        - name: board-temperature2
+          param_type: int
+          metric_type: gauge
+        - name: temperature
+          param_type: int
+          metric_type: gauge
+        - name: voltage
+          param_type: int
+          metric_type: gauge
+        - name: psu1-voltage
+          param_type: int
+          metric_type: gauge
+        - name: psu2-voltage
+          param_type: int
+          metric_type: gauge
+        - name: psu1-current
+          param_type: int
+          metric_type: gauge
+        - name: psu2-current
+          param_type: int
+          metric_type: gauge
+        - name: psu1-state
+          param_type: enum
+          enum_values:
+            ok: 1
+          default: 0
+          metric_type: gauge
+        - name: psu2-state
+          param_type: enum
+          enum_values:
+            ok: 1
+          default: 0
+          metric_type: gauge
+        - name: fan1-speed
+          param_type: int
+          metric_type: gauge
+        - name: fan2-speed
+          param_type: int
+          metric_type: gauge
+        - name: fan3-speed
+          param_type: int
+          metric_type: gauge
+        - name: fan4-speed
+          param_type: int
+          metric_type: gauge
