@@ -27,7 +27,7 @@ http://127.0.0.1:9436/reload                                              reload
 
 
 ## TODO
-- add modules (interface, resources, health, ...)
+- suppress metric if no value assigned at scrape (needed for health module)
 - docker image
 - split main class into seperate files
 - documentation
