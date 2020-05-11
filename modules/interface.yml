@@ -1,0 +1,132 @@
+modules:
+  interface:
+    - command: /interface/ethernet/print
+      labels:
+        - name: name
+          param_type: string
+      metrics:
+        - name: rx-broadcast
+          param_type: int
+          metric_type: counter
+        - name: tx-broadcast
+          param_type: int
+          metric_type: counter
+        - name: rx-multicast
+          param_type: int
+          metric_type: counter
+        - name: tx-multicast
+          param_type: int
+          metric_type: counter
+        - name: rx-fcs-error
+          param_type: int
+          metric_type: counter
+        - name: rx-too-short
+          param_type: int
+          metric_type: counter
+        - name: rx-64
+          param_type: int
+          metric_type: counter
+        - name: rx-65-127
+          param_type: int
+          metric_type: counter
+        - name: rx-128-255
+          param_type: int
+          metric_type: counter
+        - name: rx-256-511
+          param_type: int
+          metric_type: counter
+        - name: rx-512-1023
+          param_type: int
+          metric_type: counter
+        - name: rx-1024-1518
+          param_type: int
+          metric_type: counter
+        - name: rx-1519-max
+          param_type: int
+          metric_type: counter
+        - name: rx-too-long
+          param_type: int
+          metric_type: counter
+        - name: tx-64
+          param_type: int
+          metric_type: counter
+        - name: tx-65-127
+          param_type: int
+          metric_type: counter
+        - name: tx-128-255
+          param_type: int
+          metric_type: counter
+        - name: tx-256-511
+          param_type: int
+          metric_type: counter
+        - name: tx-512-1023
+          param_type: int
+          metric_type: counter
+        - name: tx-1024-1518
+          param_type: int
+          metric_type: counter
+        - name: tx-1519-max
+          param_type: int
+          metric_type: counter
+        - name: tx-too-long
+          param_type: int
+          metric_type: counter
+    - command: /interface/print
+      labels:
+        - name: name
+          param_type: string
+        - name: type
+          param_type: string
+          label_name: type
+      metrics:
+        - name: disabled
+          metric_name: enabled
+          param_type: bool
+          metric_type: gauge
+          negate: true
+        - name: running
+          param_type: bool
+          metric_type: gauge
+        - name: tx-byte
+          param_type: int
+          metric_type: counter
+        - name: rx-byte
+          param_type: int
+          metric_type: counter
+        - name: tx-packet
+          param_type: int
+          metric_type: counter
+        - name: rx-packet
+          param_type: int
+          metric_type: counter
+        - name: rx-error
+          param_type: int
+          metric_type: counter
+        - name: tx-error
+          param_type: int
+          metric_type: counter
+        - name: rx-drop
+          param_type: int
+          metric_type: counter
+        - name: tx-drop
+          param_type: int
+          metric_type: counter
+        - name: rx-queue-drop
+          param_type: int
+          metric_type: counter
+        - name: tx-queue-drop
+          param_type: int
+          metric_type: counter
+        - name: link-downs
+          param_type: int
+          metric_type: counter
+        - name: last-link-down-time
+          metric_name: last_link_down
+          param_type: datetime
+          metric_type: gauge
+          datetime_type: fromnow
+        - name: last-link-up-time
+          metric_name: last_link_up
+          param_type: datetime
+          metric_type: gauge
+          datetime_type: fromnow
