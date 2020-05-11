@@ -16,13 +16,7 @@ namespace MikrotikExporter.Configuration
         [Required]
         [RegularExpression(@"^(?!__)[a-zA-Z_:][a-zA-Z0-9_:]*$")]
         [YamlIgnore]
-        public string LabelNameOrName
-        {
-            get
-            {
-                return LabelName ?? Name;
-            }
-        }
+        public string LabelNameOrName => LabelName ?? Name.Replace("-", "_", System.StringComparison.InvariantCulture);
 
         internal string AsString(Log log, ITikReSentence tikSentence)
         {

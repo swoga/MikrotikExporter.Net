@@ -37,12 +37,6 @@ namespace MikrotikExporter.Configuration
         [Required]
         [RegularExpression("^[a-zA-Z_:][a-zA-Z0-9_:]*$")]
         [YamlIgnore]
-        public string MetricNameOrName
-        {
-            get
-            {
-                return MetricName ?? Name;
-            }
-        }
+        public string MetricNameOrName => MetricName ?? Name.Replace("-", "_", System.StringComparison.InvariantCulture);
     }
 }
