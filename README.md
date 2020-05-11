@@ -2,7 +2,7 @@
 Prometheus Exporter written in .NET Core 3.1 to export metrics from MikroTik devices.  
 It is not predetermined which metrics are collected, you can create own modules, please see the examples [here](https://github.com/swoga/MikrotikExporter.Net/blob/master/examples/example.yml) and [here](https://github.com/swoga/MikrotikExporter.Net/blob/master/examples/modules/interface.yml)
 
-[configration defaults](https://github.com/swoga/MikrotikExporter.Net/tree/master/MikrotikExporter/Configuration)
+[configuration defaults](https://github.com/swoga/MikrotikExporter.Net/tree/master/MikrotikExporter/Configuration)
 
 ### start arguments
 ```
