@@ -73,6 +73,10 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "default")]
         public string Default { get; set; }
 
+        /// <summary>
+        /// Only relevant for <c>ParamType.Enum</c>
+        /// Maps strings to a value
+        /// </summary>
         [YamlMember(Alias="enum_values")]
         public Dictionary<string, double> EnumValues {get; set; }
 
