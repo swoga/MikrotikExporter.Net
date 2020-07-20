@@ -63,6 +63,12 @@ namespace MikrotikExporter.Configuration
 
                 tikCommand.ExecuteAsync((re) =>
                 {
+                    if (tcs.Task.IsFaulted)
+                    {
+                        log.Error("ignore api response, scrape already faulted");
+                        return;
+                    }
+
                     var responseId = Interlocked.Increment(ref responseCounter);
                     var responseLogger = log.CreateContext($"response {responseId}");
                     responseLogger.Debug2($"api response: {re}");
@@ -99,14 +105,15 @@ namespace MikrotikExporter.Configuration
                 () =>
                 {
                     log.Debug1("done callback");
-                    ctsTimeout.Cancel();
                     tcs.TrySetResult(null);
                 }
                 );
 
                 await tcs.Task.ConfigureAwait(false);
-            } finally
+            }
+            finally
             {
+                ctsTimeout.Cancel();
                 ctsTimeout.Dispose();
             }
         }
