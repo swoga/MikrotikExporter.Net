@@ -80,6 +80,13 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias="enum_values")]
         public Dictionary<string, double> EnumValues {get; set; }
 
+        /// <summary>
+        /// Only relevant for <c>ParamType.Enum</c>
+        /// Fallback value if string is not found in mapping
+        /// </summary>
+        [YamlMember(Alias ="enum_fallback")]
+        public double? EnumFallback { get; set; }
+
         private static readonly Regex regexTimepan = new Regex(@"(?:(\d+)(w))?(?:(\d+)(d))?(?:(\d+)(h))?(?:(\d+)(m))?(?:(\d+)(s))?", RegexOptions.Compiled);
 
         /// <summary>
@@ -165,6 +172,13 @@ namespace MikrotikExporter.Configuration
                         break;
                     case ParamType.Enum:
                         if (EnumValues.TryGetValue(word, out value)) {
+                            return true;
+                        }
+                        else if (EnumFallback.HasValue)
+                        {
+                            log.Debug1($"'{value}' not found in enum mapping, use fallback value");
+
+                            value = EnumFallback.Value;
                             return true;
                         }
                         break;
