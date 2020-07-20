@@ -27,7 +27,7 @@ namespace MikrotikExporter.Configuration
                 log.Debug2($"got '{Name}' as string from api response");
                 return word;
             }
-            else if (TryGetValue(log, tikSentence, out var value))
+            else if (ParamType != ParamType.String && TryGetValue(log, tikSentence, out var value))
             {
                 return value.ToString(CultureInfo.InvariantCulture);
             }
