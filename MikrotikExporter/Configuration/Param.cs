@@ -65,7 +65,7 @@ namespace MikrotikExporter.Configuration
         /// Only relevant for <c>ParamType.DateTime</c>
         /// </summary>
         [YamlMember(Alias = "datetime_type")]
-        public DateTimeType DateTimeType { get; set; }
+        public DateTimeType? DateTimeType { get; set; }
 
         /// <summary>
         /// Default value if omitted in the MikroTik API
@@ -145,10 +145,10 @@ namespace MikrotikExporter.Configuration
                         if (DateTime.TryParseExact(word, "MMM/dd/yyyy HH:mm:ss", new CultureInfo("en-US"), DateTimeStyles.None, out var dateTime))
                         {
                             var now = DateTime.Now;
-                            var timeSpan = DateTimeType switch
+                            var timeSpan = DateTimeType.Value switch
                             {
-                                DateTimeType.FromNow => now - dateTime,
-                                DateTimeType.ToNow => dateTime - now,
+                                Configuration.DateTimeType.FromNow => now - dateTime,
+                                Configuration.DateTimeType.ToNow => dateTime - now,
                                 _ => throw new NotImplementedException($"unknown DateTimeType: {DateTimeType}"),
                             };
                             value = timeSpan.TotalSeconds;
