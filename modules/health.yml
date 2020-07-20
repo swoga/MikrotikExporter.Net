@@ -36,13 +36,15 @@ modules:
           param_type: enum
           enum_values:
             ok: 1
-          default: 0
+            fail: 0
+          enum_fallback: -1
           metric_type: gauge
         - name: psu2-state
           param_type: enum
           enum_values:
             ok: 1
-          default: 0
+            fail: 0
+          enum_fallback: -1
           metric_type: gauge
         - name: fan1-speed
           param_type: int
