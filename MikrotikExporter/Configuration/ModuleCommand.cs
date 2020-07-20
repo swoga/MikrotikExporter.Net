@@ -41,12 +41,12 @@ namespace MikrotikExporter.Configuration
                 var labelNames = moduleLabelNames.Concat(metricLabelNames).ToArray();
                 var metricNameWithPrefix = namePrefix + metric.MetricNameOrName;
 
-                log.Debug2($"create metric '{metricNameWithPrefix}' as {metric.MetricType}");
+                log.Debug2($"prepare metric '{metricNameWithPrefix}' as {metric.MetricType}");
 
                 return metric.MetricType switch
                 {
-                    MetricType.Gauge => Tuple.Create(metric, (Collector)metricFactory.CreateGauge(metricNameWithPrefix, metric.Help, labelNames)),
-                    MetricType.Counter => Tuple.Create(metric, (Collector)metricFactory.CreateCounter(metricNameWithPrefix, metric.Help, labelNames)),
+                    MetricType.Gauge => new MetricCollector(metric, () => metricFactory.CreateGauge(metricNameWithPrefix, metric.Help, labelNames)),
+                    MetricType.Counter => new MetricCollector(metric, () => metricFactory.CreateCounter(metricNameWithPrefix, metric.Help, labelNames)),
                     _ => throw new Exception("unkown type"),
                 };
             }).ToArray();
@@ -69,12 +69,14 @@ namespace MikrotikExporter.Configuration
 
                     foreach (var metricCollector in metricCollectors)
                     {
-                        var metric = metricCollector.Item1;
-                        var collector = metricCollector.Item2;
+                        var metric = metricCollector.Metric;
                         var metricLogger = responseLogger.CreateContext($"metric {metric.Name}");
 
                         if (metric.TryGetValue(metricLogger, re, out var value))
                         {
+                            // get or add collector only if a value can be determined, either from the response or from the default value
+                            var collector = metricCollector.GetOrAddCollector();
+
                             metricLogger.Debug2($"value for '{metric.Name}' is '{value}', create metric");
                             var labelLogger = metricLogger.CreateContext("labels");
                             var moduleLabelValues = Labels.Select(label => label.AsString(labelLogger, re));
