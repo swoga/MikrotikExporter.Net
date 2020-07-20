@@ -16,7 +16,6 @@
     </PackageReference>
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
     <PackageReference Include="prometheus-net.BlackboxMetricServer" Version="1.0.1" />
-    <PackageReference Include="System.Text.Json" Version="4.7.1" />
     <PackageReference Include="tik4net" Version="3.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.1" />
   </ItemGroup>
