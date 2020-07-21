@@ -76,14 +76,14 @@ namespace MikrotikExporter.Configuration
                     foreach (var metricCollector in metricCollectors)
                     {
                         var metric = metricCollector.Metric;
-                        var metricLogger = responseLogger.CreateContext($"metric {metric.Name}");
+                        var metricLogger = responseLogger.CreateContext($"metric {metric.MetricNameOrName}");
 
                         if (metric.TryGetValue(metricLogger, re, out var value))
                         {
                             // get or add collector only if a value can be determined, either from the response or from the default value
                             var collector = metricCollector.GetOrAddCollector();
 
-                            metricLogger.Debug2($"value for '{metric.Name}' is '{value}', create metric");
+                            metricLogger.Debug2($"got value '{value}', create metric");
                             var labelLogger = metricLogger.CreateContext("labels");
                             var moduleLabelValues = Labels.Select(label => label.AsString(labelLogger, re));
                             var metricLabelValues = metric.Labels.Select(label => label.AsString(labelLogger, re));

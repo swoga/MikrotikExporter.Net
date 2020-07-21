@@ -98,7 +98,7 @@ namespace MikrotikExporter.Configuration
         /// <returns></returns>
         internal bool TryGetValue(Log log, ITikReSentence tikSentence, out double value)
         {
-            log.Debug2($"try to get '{Name}'");
+            log.Debug2("try to get value");
 
             if (!tikSentence.TryGetResponseField(Name, out string word))
             {
@@ -108,7 +108,7 @@ namespace MikrotikExporter.Configuration
 
             if (word != null)
             {
-                log.Debug2($"parse '{Name}' as {ParamType}");
+                log.Debug2($"parse as {ParamType}");
 
                 switch (ParamType)
                 {
@@ -149,7 +149,7 @@ namespace MikrotikExporter.Configuration
                         }
                         else
                         {
-                            log.Error($"failed to parse Timespan '{word}' from '{Name}'");
+                            log.Error($"failed to parse Timespan '{word}'");
                         }
                         break;
                     case ParamType.DateTime:
@@ -167,7 +167,7 @@ namespace MikrotikExporter.Configuration
                         }
                         else
                         {
-                            log.Error($"failed to parse DateTime '{word}' from '{Name}'");
+                            log.Error($"failed to parse DateTime '{word}'");
                         }
                         break;
                     case ParamType.Enum:
@@ -185,7 +185,7 @@ namespace MikrotikExporter.Configuration
                 }
             }
 
-            log.Debug2($"failed to get a value for '{Name}'");
+            log.Debug2("failed to get value");
             value = 0;
             return false;
         }
