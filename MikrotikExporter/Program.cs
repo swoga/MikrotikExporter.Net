@@ -230,7 +230,7 @@ namespace MikrotikExporter
                                 {
                                     var response = context.Response;
 
-                                    var staticConfigs = Configuration.Targets.Select((kvp) => new Discover.StaticConfig() { Lables = kvp.Value.DiscoverLabels, Targets = new string[] { kvp.Key } });
+                                    var staticConfigs = Configuration.Targets.Select((kvp) => new Discover.StaticConfig() { Labels = kvp.Value.DiscoverLabels, Targets = new string[] { kvp.Key } });
 
                                     var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
                                     response.OutputStream.Write(System.Text.Encoding.UTF8.GetBytes(serializer.Serialize(staticConfigs)));
