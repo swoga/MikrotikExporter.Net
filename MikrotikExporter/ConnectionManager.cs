@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MikrotikExporter.Configuration;
+using System;
 using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -38,6 +39,8 @@ namespace MikrotikExporter
             {
                 TikConnection = ConnectionFactory.CreateConnection(TikConnectionType.Api);
                 TikConnection.SendTagWithSyncCommand = true;
+                TikConnection.ReceiveTimeout = (int)Program.Configuration.Global.CommandTimeout.TotalMilliseconds;
+                TikConnection.SendTimeout = (int)Program.Configuration.Global.CommandTimeout.TotalMilliseconds;
                 TikConnection.Open(host, user, pass);
             }
 
