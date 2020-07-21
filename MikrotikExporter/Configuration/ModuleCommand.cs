@@ -73,6 +73,9 @@ namespace MikrotikExporter.Configuration
                     var responseLogger = log.CreateContext($"response {responseId}");
                     responseLogger.Debug2($"api response: {re}");
 
+                    var moduleLabelLogger = responseLogger.CreateContext("labels");
+                    var moduleLabelValues = Labels.Select(label => label.AsString(moduleLabelLogger, re)).ToArray();
+
                     foreach (var metricCollector in metricCollectors)
                     {
                         var metric = metricCollector.Metric;
@@ -85,7 +88,6 @@ namespace MikrotikExporter.Configuration
 
                             metricLogger.Debug2($"got value '{value}', create metric");
                             var labelLogger = metricLogger.CreateContext("labels");
-                            var moduleLabelValues = Labels.Select(label => label.AsString(labelLogger, re));
                             var metricLabelValues = metric.Labels.Select(label => label.AsString(labelLogger, re));
                             var labelValues = moduleLabelValues.Concat(metricLabelValues).ToArray();
 
