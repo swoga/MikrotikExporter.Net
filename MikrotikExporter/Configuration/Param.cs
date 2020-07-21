@@ -46,8 +46,8 @@ namespace MikrotikExporter.Configuration
     {
         /// <summary>
         /// Name of the parameter in the MikroTik API
+        /// If empty, default value is used
         /// </summary>
-        [Required]
         [YamlMember(Alias = "name")]
         public string Name { get; set; }
 
@@ -98,9 +98,16 @@ namespace MikrotikExporter.Configuration
         /// <returns></returns>
         internal bool TryGetValue(Log log, ITikReSentence tikSentence, out double value)
         {
+            string word = null;
+
             log.Debug2("try to get value");
 
-            if (!tikSentence.TryGetResponseField(Name, out string word))
+            if (Name == null)
+            {
+                log.Debug2("static parameter, use default");
+                word = Default;
+            }
+            else if (!tikSentence.TryGetResponseField(Name, out word))
             {
                 log.Debug2($"'{Name}' not found in response, use default");
                 word = Default;

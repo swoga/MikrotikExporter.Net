@@ -24,7 +24,7 @@ namespace MikrotikExporter.Configuration
 
             labelLogger.Debug2("try to get value");
 
-            if (ParamType == ParamType.String && tikSentence.TryGetResponseField(Name, out var word))
+            if (ParamType == ParamType.String && Name != null && tikSentence.TryGetResponseField(Name, out var word))
             {
                 labelLogger.Debug2("got as string from api response");
                 return word;
