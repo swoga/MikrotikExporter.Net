@@ -139,6 +139,21 @@ namespace MikrotikExporter
             }
         }
 
+        public static Task InitConfigurationReload(CancellationToken token)
+        {
+            return Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await Task.Delay(Program.Configuration.Global.ConfigurationReloadInterval, token).ConfigureAwait(false);
+                    if (!token.IsCancellationRequested)
+                    {
+                        LoadConfiguration(Log.Main.CreateContext("configuration load interval"));
+                    }
+                }
+            }, token);
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         static void Main(string[] args)
         {
@@ -271,6 +286,7 @@ namespace MikrotikExporter
 
                 // start the cleanup for stale connections
                 ConnectionManager.InitCleanup(cts.Token);
+                InitConfigurationReload(cts.Token);
 
                 Log.Main.Info("start metric server");
                 metricServer = new BlackboxMetricServer(Configuration.Global.Port, Configuration.Global.MetricsUrl);

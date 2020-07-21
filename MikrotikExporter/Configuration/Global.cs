@@ -56,5 +56,7 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "connection_cleanup_interval")]
         public TimeSpan ConnectionCleanupInterval { get; set; } = TimeSpan.FromMinutes(1);
 
+        [YamlMember(Alias = "configuration_reload_interval")]
+        public TimeSpan ConfigurationReloadInterval { get; set; } = TimeSpan.FromMinutes(1);
     }
 }
