@@ -7,9 +7,7 @@ namespace MikrotikExporter.Discover
 {
     class StaticConfig
     {
-        [JsonPropertyName("targets")]
         public string[] Targets { get; set; }
-        [JsonPropertyName("labels")]
         public Dictionary<string, string> Labels { get; set; }
     }
 }
