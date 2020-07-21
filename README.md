@@ -27,7 +27,6 @@ http://127.0.0.1:9436/reload                                              reload
 
 
 ## TODO
-- docker image
 - split main class into seperate files
 - documentation
 - automated tests
