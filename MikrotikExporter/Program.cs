@@ -55,22 +55,37 @@ namespace MikrotikExporter
 
                     foreach (var moduleFilePath in Directory.GetFiles(newConfiguration.Global.ModuleFolder, "*.yml"))
                     {
-                        using var streamReader = File.OpenText(moduleFilePath);
-                        var deserializer = new DeserializerBuilder().WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
-                        var moduleFile = deserializer.Deserialize<Configuration.ModuleFile>(streamReader);
-
-                        foreach (var kvpModule in moduleFile.Modules)
+                        try
                         {
-                            if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
-                            {
-                                error = true;
-                                log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
-                                continue;
-                            }
+                            using var streamReader = File.OpenText(moduleFilePath);
+                            var deserializer = new DeserializerBuilder().WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
+                            var moduleFile = deserializer.Deserialize<Configuration.ModuleFile>(streamReader);
 
-                            newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
+                            foreach (var kvpModule in moduleFile.Modules)
+                            {
+                                if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
+                                {
+                                    error = true;
+                                    log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
+                                    continue;
+                                }
+
+                                newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            error = true;
+                            log.Error($"error loading '{moduleFilePath}': {ex}");
+                            continue;
                         }
                     }
+                }
+
+                if (error)
+                {
+                    log.Error("abort configuration load due to previous errors");
+                    return false;
                 }
 
                 foreach (var target in newConfiguration.Targets)
