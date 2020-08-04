@@ -82,6 +82,13 @@ namespace MikrotikExporter.Configuration
 
         /// <summary>
         /// Only relevant for <c>ParamType.Enum</c>
+        /// Maps strings to a value
+        /// </summary>
+        [YamlMember(Alias = "enum_values_re")]
+        public Dictionary<Regex, double> EnumValuesRegex { get; set; }
+
+        /// <summary>
+        /// Only relevant for <c>ParamType.Enum</c>
         /// Fallback value if string is not found in mapping
         /// </summary>
         [YamlMember(Alias ="enum_fallback")]
@@ -178,15 +185,27 @@ namespace MikrotikExporter.Configuration
                         }
                         break;
                     case ParamType.Enum:
-                        if (EnumValues.TryGetValue(word, out value)) {
+                        if (EnumValues != null && EnumValues.TryGetValue(word, out value))
+                        {
+                            log.Debug2($"'{value}' found in enum mapping");
+
                             return true;
                         }
-                        else if (EnumFallback.HasValue)
+                        else
                         {
-                            log.Debug1($"'{value}' not found in enum mapping, use fallback value");
-
-                            value = EnumFallback.Value;
-                            return true;
+                            var matchedValue = EnumValuesRegex?.Where(kvp => kvp.Key.IsMatch(word))?.Select(kvp => new { kvp.Value })?.FirstOrDefault();
+                            if (matchedValue != null)
+                            {
+                                value = matchedValue.Value;
+                                log.Debug2($"'{value}' found in enum regex mapping");
+                                return true;
+                            }
+                            else if (EnumFallback.HasValue)
+                            {
+                                value = EnumFallback.Value;
+                                log.Debug1($"'{value}' not found in enum mapping, use fallback value");
+                                return true;
+                            }
                         }
                         break;
                 }

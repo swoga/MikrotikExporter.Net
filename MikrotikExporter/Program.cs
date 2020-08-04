@@ -43,7 +43,7 @@ namespace MikrotikExporter
                 Configuration.Root newConfiguration;
                 using (var streamReader = File.OpenText(configurationFile))
                 {
-                    var deserializer = new DeserializerBuilder().WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
+                    var deserializer = new DeserializerBuilder().WithTypeConverter(new YamlTypeConverter()).WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
                     newConfiguration = deserializer.Deserialize<Configuration.Root>(streamReader);
                 }
 
@@ -58,7 +58,7 @@ namespace MikrotikExporter
                         try
                         {
                             using var streamReader = File.OpenText(moduleFilePath);
-                            var deserializer = new DeserializerBuilder().WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
+                            var deserializer = new DeserializerBuilder().WithTypeConverter(new YamlTypeConverter()).WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
                             var moduleFile = deserializer.Deserialize<Configuration.ModuleFile>(streamReader);
 
                             foreach (var kvpModule in moduleFile.Modules)
