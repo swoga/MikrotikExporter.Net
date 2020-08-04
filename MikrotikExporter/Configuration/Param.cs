@@ -95,6 +95,7 @@ namespace MikrotikExporter.Configuration
         public double? EnumFallback { get; set; }
 
         private static readonly Regex regexTimepan = new Regex(@"(?:(\d+)(w))?(?:(\d+)(d))?(?:(\d+)(h))?(?:(\d+)(m))?(?:(\d+)(s))?", RegexOptions.Compiled);
+        private static readonly Regex regexAZ = new Regex(@"[a-zA-Z]", RegexOptions.Compiled);
 
         /// <summary>
         /// Tries to get the parameter from the <paramref name="tikSentence"/>, if omitted uses the default value and parses it to double.
@@ -127,6 +128,8 @@ namespace MikrotikExporter.Configuration
                 switch (ParamType)
                 {
                     case ParamType.Int:
+                        // remove potential units
+                        word = regexAZ.Replace(word, "");
                         value = double.Parse(word, CultureInfo.InvariantCulture);
                         return true;
                     case ParamType.Bool:
