@@ -49,35 +49,38 @@ namespace MikrotikExporter
 
                 bool error = false;
 
-                if (newConfiguration.Global.ModuleFolder != null)
+                if (newConfiguration.Global.ModuleFolders != null)
                 {
-                    //load all yaml files from the module folder and add them to the configuration object if the name is not already used
+                    //load all yaml files from the module folders and add them to the configuration object if the name is not already used
 
-                    foreach (var moduleFilePath in Directory.GetFiles(newConfiguration.Global.ModuleFolder, "*.yml"))
+                    foreach (var moduleFolder in newConfiguration.Global.ModuleFolders)
                     {
-                        try
+                        foreach (var moduleFilePath in Directory.GetFiles(moduleFolder, "*.yml"))
                         {
-                            using var streamReader = File.OpenText(moduleFilePath);
-                            var deserializer = new DeserializerBuilder().WithTypeConverter(new YamlTypeConverter()).WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
-                            var moduleFile = deserializer.Deserialize<Configuration.ModuleFile>(streamReader);
-
-                            foreach (var kvpModule in moduleFile.Modules)
+                            try
                             {
-                                if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
-                                {
-                                    error = true;
-                                    log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
-                                    continue;
-                                }
+                                using var streamReader = File.OpenText(moduleFilePath);
+                                var deserializer = new DeserializerBuilder().WithTypeConverter(new YamlTypeConverter()).WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
+                                var moduleFile = deserializer.Deserialize<Configuration.ModuleFile>(streamReader);
 
-                                newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
+                                foreach (var kvpModule in moduleFile.Modules)
+                                {
+                                    if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
+                                    {
+                                        error = true;
+                                        log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
+                                        continue;
+                                    }
+
+                                    newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            error = true;
-                            log.Error($"error loading '{moduleFilePath}': {ex}");
-                            continue;
+                            catch (Exception ex)
+                            {
+                                error = true;
+                                log.Error($"error loading '{moduleFilePath}': {ex}");
+                                continue;
+                            }
                         }
                     }
                 }

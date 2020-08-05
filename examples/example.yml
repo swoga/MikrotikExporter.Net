@@ -1,7 +1,8 @@
 global:
   username: admin
   password: admin
-  module_folder: modules # absolute path to folder or relative to this file
+  module_folders:
+    - modules # absolute path to folder or relative to this file
 
 targets:
   router1:

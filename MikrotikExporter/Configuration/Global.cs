@@ -41,8 +41,8 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "prefix")]
         public string Prefix { get; set; } = "mikrotik";
 
-        [YamlMember(Alias = "module_folder")]
-        public string ModuleFolder { get; set; }
+        [YamlMember(Alias = "module_folders")]
+        public string[] ModuleFolders { get; set; }
 
         [YamlMember(Alias = "command_timeout")]
         public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromSeconds(5);
