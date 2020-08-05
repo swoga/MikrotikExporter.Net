@@ -4,6 +4,23 @@ modules:
       labels:
         - name: name
           param_type: string
+      variables:
+        - name: .id
+          label_name: id
+          param_type: string
+      sub_commands:
+        - command: |-
+            /interface/ethernet/monitor
+            =numbers={id}
+            =once=
+
+          labels:
+            - name: name
+              param_type: string
+          metrics:
+            - name: sfp-rx-power
+              param_type: int
+              metric_type: gauge
       metrics:
         - name: rx-broadcast
           param_type: int
