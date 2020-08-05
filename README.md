@@ -18,7 +18,7 @@ http://127.0.0.1:9436/metrics?target=router1                              scrape
 http://127.0.0.1:9436/metrics?target=router1&module=interface             scrapes only the interface module
 http://127.0.0.1:9436/metrics?target=router1&module=interface,resource    scrapes the interface and resource module
 http://127.0.0.1:9436/discover                                            returns all targets in static_config format
-http://127.0.0.1:9436/reload                                              reloads all configuration files
+http://127.0.0.1:9436/-/reload (POST)                                     reloads all configuration files
 ```
 
 ## uses the following libraries

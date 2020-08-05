@@ -33,7 +33,7 @@ namespace MikrotikExporter.Configuration
 
         [YamlMember(Alias = "reload_url")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
-        public string ReloadUrl { get; set; } = "reload/";
+        public string ReloadUrl { get; set; } = "-/reload/";
 
         /// <summary>
         /// Prefix for metric names

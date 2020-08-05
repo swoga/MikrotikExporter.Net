@@ -215,6 +215,13 @@ namespace MikrotikExporter
                                   {
                                       var response = context.Response;
 
+                                      if (context.Request.HttpMethod != "POST")
+                                      {
+                                          response.StatusCode = 405;
+                                          response.Close();
+                                          return;
+                                      }
+
                                       if (LoadConfiguration(Log.Main.CreateContext("configuration load api")))
                                       {
                                           response.StatusCode = 200;
