@@ -19,6 +19,9 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "discover_labels")]
         public Dictionary<string, string> DiscoverLabels { get; private set; } = new Dictionary<string, string>();
 
+        [YamlMember(Alias = "variables")]
+        public Dictionary<string, string> Variables { get; private set; } = new Dictionary<string, string>();
+
         /// <summary>
         /// Default modules for this target, if ?module=xxx is omitted
         /// </summary>

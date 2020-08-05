@@ -19,7 +19,7 @@ namespace MikrotikExporter.Configuration
         [YamlIgnore]
         public string LabelNameOrName => LabelName ?? Name.Replace("-", "_", System.StringComparison.InvariantCulture);
 
-        internal string AsString(Log log, ITikReSentence tikSentence)
+        internal string AsString(Log log, ITikReSentence tikSentence, Dictionary<string, string> variables)
         {
             log.Debug2("try to get value");
 
@@ -28,14 +28,14 @@ namespace MikrotikExporter.Configuration
                 log.Debug2("got as string from api response");
                 return word;
             }
-            else if (ParamType != ParamType.String && TryGetValue(log, tikSentence, out var value))
+            else if (ParamType != ParamType.String && TryGetValue(log, tikSentence, variables, out var value))
             {
                 return value.ToString(CultureInfo.InvariantCulture);
             }
             else
             {
                 log.Debug2("use default value");
-                return Default ?? "";
+                return GetDefaultWithSubstitution(variables) ?? "";
             }
         }
     }

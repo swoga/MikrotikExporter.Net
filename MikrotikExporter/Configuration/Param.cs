@@ -72,6 +72,21 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "default")]
         public string Default { get; set; }
 
+        internal string GetDefaultWithSubstitution(Dictionary<string, string> variables)
+        {
+            if (Default == null)
+            {
+                return null;
+            }
+
+            var substitutedDefault = Default;
+            foreach (var variable in variables)
+            {
+                substitutedDefault = substitutedDefault.Replace($"{{{variable.Key}}}", variable.Value, true, CultureInfo.InvariantCulture);
+            }
+            return substitutedDefault;
+        }
+
         /// <summary>
         /// Only relevant for <c>ParamType.Enum</c>
         /// Maps strings to a value
@@ -103,7 +118,7 @@ namespace MikrotikExporter.Configuration
         /// <param name="tikSentence"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal bool TryGetValue(Log log, ITikReSentence tikSentence, out double value)
+        internal bool TryGetValue(Log log, ITikReSentence tikSentence, Dictionary<string, string> variables, out double value)
         {
             string word = null;
 
@@ -112,12 +127,12 @@ namespace MikrotikExporter.Configuration
             if (Name == null)
             {
                 log.Debug2("static parameter, use default");
-                word = Default;
+                word = GetDefaultWithSubstitution(variables);
             }
             else if (!tikSentence.TryGetResponseField(Name, out word))
             {
                 log.Debug2($"'{Name}' not found in response, use default");
-                word = Default;
+                word = GetDefaultWithSubstitution(variables);
             }
 
             if (word != null)

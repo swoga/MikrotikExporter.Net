@@ -28,16 +28,24 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "metrics")]
         public List<Metric> Metrics { get; private set; } = new List<Metric>();
 
-        internal async Task Run(Log log, ITikConnection connection, MetricFactory metricFactory, Configuration.Root configuration, string moduleName)
+        [YamlMember(Alias = "variables")]
+        public List<Label> Variables { get; private set; } = new List<Label>();
+
+        [YamlMember(Alias = "sub_commands")]
+        public List<ModuleCommand> SubCommands { get; private set; } = new List<ModuleCommand>();
+
+        /// <summary>
+        /// Prepares all metrics for this and all subordinate commands
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="metricFactory"></param>
+        /// <param name="namePrefix"></param>
+        /// <param name="metricCollectorsCache"></param>
+        internal void Prepare(Log log, MetricFactory metricFactory, string namePrefix, Dictionary<ModuleCommand, MetricCollector[]> metricCollectorsCache)
         {
-            log.Debug1($"run command '{Command}'");
-
-            var tcs = new TaskCompletionSource<object>();
-
             var moduleLabelNames = Labels.Select(label => label.LabelNameOrName).ToArray();
-            var namePrefix = configuration.Global.Prefix + '_' + (Prefix ?? moduleName) + '_';
 
-            var metricCollectors = Metrics.Select((metric) =>
+            metricCollectorsCache.Add(this, Metrics.Select((metric) =>
             {
                 var metricLabelNames = metric.Labels.Select(label => label.LabelNameOrName);
                 var labelNames = moduleLabelNames.Concat(metricLabelNames).ToArray();
@@ -51,9 +59,27 @@ namespace MikrotikExporter.Configuration
                     MetricType.Counter => new MetricCollector(metric, () => metricFactory.CreateCounter(metricNameWithPrefix, metric.Help, labelNames)),
                     _ => throw new Exception("unkown type"),
                 };
-            }).ToArray();
+            }).ToArray());
 
-            var tikCommand = connection.CreateCommand(Command);
+            foreach(var command in SubCommands)
+            {
+                command.Prepare(log, metricFactory, namePrefix, metricCollectorsCache);
+            }
+        }
+
+        internal async Task Run(Log log, ITikConnection connection, MetricFactory metricFactory, Configuration.Root configuration, string namePrefix, Dictionary<string, string> parentVariables, Dictionary<ModuleCommand, MetricCollector[]> metricCollectorsCache)
+        {
+            var tcs = new TaskCompletionSource<object>();
+
+            var substitutedCommand = Command;
+            foreach (var variable in parentVariables)
+            {
+                substitutedCommand = substitutedCommand.Replace($"{{{variable.Key}}}", variable.Value, true, CultureInfo.InvariantCulture);
+            }
+
+            log.Debug1($"run command '{substitutedCommand}'");
+
+            var tikCommand = connection.CreateCommand(substitutedCommand);
             int responseCounter = 0;
             var ctsTimeout = new CancellationTokenSource();
 
@@ -76,21 +102,23 @@ namespace MikrotikExporter.Configuration
                     responseLogger.Debug2($"api response: {re}");
 
                     var moduleLabelLogger = responseLogger.CreateContext("labels");
-                    var moduleLabelValues = Labels.Select(label => label.AsString(moduleLabelLogger, re)).ToArray();
+                    var moduleLabelValues = Labels.Select(label => label.AsString(moduleLabelLogger.CreateContext(label.LabelNameOrName), re, parentVariables)).ToArray();
+                    var metricCollectors = metricCollectorsCache[this];
+                    var metricsLogger = responseLogger.CreateContext("metrics");
 
                     foreach (var metricCollector in metricCollectors)
                     {
                         var metric = metricCollector.Metric;
-                        var metricLogger = responseLogger.CreateContext($"metric {metric.MetricNameOrName}");
+                        var metricLogger = responseLogger.CreateContext(metric.MetricNameOrName);
 
-                        if (metric.TryGetValue(metricLogger, re, out var value))
+                        if (metric.TryGetValue(metricLogger, re, parentVariables, out var value))
                         {
                             // get or add collector only if a value can be determined, either from the response or from the default value
                             var collector = metricCollector.GetOrAddCollector();
 
                             metricLogger.Debug2($"got value '{value}', create metric");
                             var labelLogger = metricLogger.CreateContext("labels");
-                            var metricLabelValues = metric.Labels.Select(label => label.AsString(labelLogger, re));
+                            var metricLabelValues = metric.Labels.Select(label => label.AsString(labelLogger.CreateContext(label.LabelNameOrName), re, parentVariables));
                             var labelValues = moduleLabelValues.Concat(metricLabelValues).ToArray();
 
                             switch (collector)
@@ -103,6 +131,31 @@ namespace MikrotikExporter.Configuration
                                     break;
                             }
                         }
+                    }
+
+                    var childVariables = new Dictionary<string, string>(parentVariables);
+                    var variablesLogger = responseLogger.CreateContext("variables");
+                    foreach(var variable in Variables)
+                    {
+                        var name = variable.LabelNameOrName;
+                        var variableLogger = variablesLogger.CreateContext(name);
+                        var value = variable.AsString(variableLogger, re, parentVariables);
+
+                        if (childVariables.TryAdd(name, value))
+                        {
+                            variableLogger.Debug2($"add with value {value}");
+                            continue;
+                        }
+
+                        variableLogger.Debug2($"overwrite with value {value}");
+                        childVariables[name] = value;
+                    }
+
+                    var iSubCommand = 1;
+                    foreach (var subCommand in SubCommands)
+                    {
+                        var subcommandLogger = responseLogger.CreateContext($"command {iSubCommand++}");
+                        subCommand.Run(subcommandLogger, connection, metricFactory, configuration, namePrefix, childVariables, metricCollectorsCache).Wait();
                     }
                 },
                 (trap) => tcs.TrySetException(new ScrapeFailedException(trap.ToString())),

@@ -346,7 +346,21 @@ namespace MikrotikExporter
 
                             var moduleLogger = log.CreateContext($"module {moduleName}");
 
-                            return Task.WhenAll(module.Select(moduleCommand => moduleCommand.Run(moduleLogger, connection.TikConnection, factory, localConfiguration, moduleName)));
+                            var tasks = new List<Task>();
+                            var iCommand = 1;
+                            foreach (var moduleCommand in module)
+                            {
+                                var commandLogger = moduleLogger.CreateContext($"command {iCommand++}");
+                                var namePrefix = localConfiguration.Global.Prefix + '_' + (moduleCommand.Prefix ?? moduleName) + '_';
+
+
+                                var metricCollectorsCache = new Dictionary<ModuleCommand, MetricCollector[]>();
+                                moduleCommand.Prepare(commandLogger, factory, namePrefix, metricCollectorsCache);
+
+                                tasks.Add(moduleCommand.Run(commandLogger, connection.TikConnection, factory, localConfiguration, namePrefix, targetConfiguration.Variables, metricCollectorsCache));
+                            }
+
+                            return Task.WhenAll(tasks);
                         })).ConfigureAwait(false);
 
                         connection.LastUse = DateTime.Now;
