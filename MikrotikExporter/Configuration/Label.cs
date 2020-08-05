@@ -21,13 +21,11 @@ namespace MikrotikExporter.Configuration
 
         internal string AsString(Log log, ITikReSentence tikSentence)
         {
-            var labelLogger = log.CreateContext(LabelNameOrName);
-
-            labelLogger.Debug2("try to get value");
+            log.Debug2("try to get value");
 
             if (ParamType == ParamType.String && Name != null && tikSentence.TryGetResponseField(Name, out var word))
             {
-                labelLogger.Debug2("got as string from api response");
+                log.Debug2("got as string from api response");
                 return word;
             }
             else if (ParamType != ParamType.String && TryGetValue(log, tikSentence, out var value))
@@ -36,7 +34,7 @@ namespace MikrotikExporter.Configuration
             }
             else
             {
-                labelLogger.Debug2("use default value");
+                log.Debug2("use default value");
                 return Default ?? "";
             }
         }
