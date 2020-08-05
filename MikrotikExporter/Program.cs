@@ -1,4 +1,5 @@
-﻿using Mono.Options;
+﻿using MikrotikExporter.Configuration;
+using Mono.Options;
 using Prometheus;
 using Prometheus.BlackboxMetricServer;
 using System;
