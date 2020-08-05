@@ -43,8 +43,7 @@ namespace MikrotikExporter
                 Configuration.Root newConfiguration;
                 using (var streamReader = File.OpenText(configurationFile))
                 {
-                    var deserializer = new DeserializerBuilder().WithTypeConverter(new YamlTypeConverter()).WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
-                    newConfiguration = deserializer.Deserialize<Configuration.Root>(streamReader);
+                    newConfiguration = YamlDeserializer.Parse<Configuration.Root>(streamReader);
                 }
 
                 bool error = false;
@@ -60,8 +59,7 @@ namespace MikrotikExporter
                             try
                             {
                                 using var streamReader = File.OpenText(moduleFilePath);
-                                var deserializer = new DeserializerBuilder().WithTypeConverter(new YamlTypeConverter()).WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>()).Build();
-                                var moduleFile = deserializer.Deserialize<Configuration.ModuleFile>(streamReader);
+                                var moduleFile = YamlDeserializer.Parse<Configuration.ModuleFile>(streamReader);
 
                                 foreach (var kvpModule in moduleFile.Modules)
                                 {
