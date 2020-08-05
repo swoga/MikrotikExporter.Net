@@ -1,5 +1,4 @@
-﻿using MikrotikExporter.Configuration;
-using Mono.Options;
+﻿using Mono.Options;
 using Prometheus;
 using Prometheus.BlackboxMetricServer;
 using System;
@@ -354,7 +353,7 @@ namespace MikrotikExporter
                                 var namePrefix = localConfiguration.Global.Prefix + '_' + (moduleCommand.Prefix ?? moduleName) + '_';
 
 
-                                var metricCollectorsCache = new Dictionary<ModuleCommand, MetricCollector[]>();
+                                var metricCollectorsCache = new Dictionary<Configuration.ModuleCommand, MetricCollector[]>();
                                 moduleCommand.Prepare(commandLogger, factory, namePrefix, metricCollectorsCache);
 
                                 tasks.Add(moduleCommand.Run(commandLogger, connection.TikConnection, factory, localConfiguration, namePrefix, targetConfiguration.Variables, metricCollectorsCache));
