@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MikrotikExporter.Configuration;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +49,8 @@ namespace MikrotikExporter
 
                                     newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
                                 }
+
+                                error = ParseModuleExtensions(log, newConfiguration.Modules, moduleFile.ModuleExtensions) && error;
                             }
                             catch (Exception ex)
                             {
@@ -57,6 +61,8 @@ namespace MikrotikExporter
                         }
                     }
                 }
+
+                error = ParseModuleExtensions(log, newConfiguration.Modules, newConfiguration.ModuleExtensions) && error;
 
                 if (error)
                 {
@@ -113,6 +119,26 @@ namespace MikrotikExporter
                 log.Error(ex.ToString());
                 return false;
             }
+        }
+
+        private static bool ParseModuleExtensions(Log log, Dictionary<string, Module> modules, Dictionary<string, ModuleExtension> moduleExtensions)
+        {
+            var logExtensions = log.CreateContext("extensions");
+
+            var success = true;
+            foreach (var kvpModuleExtension in moduleExtensions)
+            {
+                var logModuleExtension = logExtensions.CreateContext(kvpModuleExtension.Key);
+
+                if (!modules.TryGetValue(kvpModuleExtension.Key, out var module))
+                {
+                    logModuleExtension.Info($"found extension, but this module was not found");
+                    continue;
+                }
+
+                success = kvpModuleExtension.Value.TryExtendModule(logModuleExtension, module) && success;
+            }
+            return success;
         }
 
         public static Task InitReload(CancellationToken token)
