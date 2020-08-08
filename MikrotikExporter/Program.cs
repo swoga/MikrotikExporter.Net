@@ -18,11 +18,11 @@ namespace MikrotikExporter
 
     class Program
     {
-        public static Configuration.Root Configuration { get; private set; }
+        public static Configuration.Root Configuration { get; internal set; }
         /// <summary>
         /// full path to the configuration file
         /// </summary>
-        private static string configurationFile;
+        public static string configurationFile;
         private static long requestCounter = 0;
         private static readonly CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -31,129 +31,6 @@ namespace MikrotikExporter
         private static Task discoverTask;
         private static HttpListener reloadServer;
         private static Task reloadTask;
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        static bool LoadConfiguration(Log log)
-        {
-            log.Info("load configuration");
-
-            try
-            {
-                Configuration.Root newConfiguration;
-                using (var streamReader = File.OpenText(configurationFile))
-                {
-                    newConfiguration = YamlDeserializer.Parse<Configuration.Root>(streamReader);
-                }
-
-                bool error = false;
-
-                if (newConfiguration.Global.ModuleFolders != null)
-                {
-                    //load all yaml files from the module folders and add them to the configuration object if the name is not already used
-
-                    foreach (var moduleFolder in newConfiguration.Global.ModuleFolders)
-                    {
-                        foreach (var moduleFilePath in Directory.GetFiles(moduleFolder, "*.yml"))
-                        {
-                            try
-                            {
-                                using var streamReader = File.OpenText(moduleFilePath);
-                                var moduleFile = YamlDeserializer.Parse<Configuration.ModuleFile>(streamReader);
-
-                                foreach (var kvpModule in moduleFile.Modules)
-                                {
-                                    if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
-                                    {
-                                        error = true;
-                                        log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
-                                        continue;
-                                    }
-
-                                    newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                error = true;
-                                log.Error($"error loading '{moduleFilePath}': {ex}");
-                                continue;
-                            }
-                        }
-                    }
-                }
-
-                if (error)
-                {
-                    log.Error("abort configuration load due to previous errors");
-                    return false;
-                }
-
-                foreach (var target in newConfiguration.Targets)
-                {
-                    foreach (var module in target.Value.Modules)
-                    {
-                        if (!newConfiguration.Modules.ContainsKey(module))
-                        {
-                            error = true;
-                            log.Error($"module '{module}' in target '{target.Key}' not found");
-                        }
-                    }
-                }
-
-                // if this is a configuration reload, check if certain immutable options were changed
-                if (Configuration != null)
-                {
-                    if (Configuration.Global.MetricsUrl != newConfiguration.Global.MetricsUrl)
-                    {
-                        log.Info("change ignored, changing the metrics_url is not allowed during runtime");
-                    }
-
-                    if (Configuration.Global.DiscoverUrl != newConfiguration.Global.DiscoverUrl)
-                    {
-                        log.Info("change ignored, changing the discover_url is not allowed during runtime");
-                    }
-
-                    if (Configuration.Global.ReloadUrl != newConfiguration.Global.ReloadUrl)
-                    {
-                        log.Info("change ignored, changing the reload_url is not allowed during runtime");
-                    }
-
-                    if (Configuration.Global.Port != newConfiguration.Global.Port)
-                    {
-                        log.Info("change ignored, changing the port is not allowed during runtime");
-                    }
-                }
-
-                if (error)
-                {
-                    return false;
-                }
-
-                Configuration = newConfiguration;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex.ToString());
-                return false;
-            }
-        }
-
-        public static Task InitConfigurationReload(CancellationToken token)
-        {
-            return Task.Run(async () =>
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    await Task.Delay(Program.Configuration.Global.ConfigurationReloadInterval, token).ConfigureAwait(false);
-                    if (!token.IsCancellationRequested)
-                    {
-                        LoadConfiguration(Log.Main.CreateContext("configuration load interval"));
-                    }
-                }
-            }, token);
-        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         static void Main(string[] args)
@@ -190,7 +67,7 @@ namespace MikrotikExporter
                 Directory.SetCurrentDirectory(configurationFolder);
 
                 // inital configuration load
-                if (!LoadConfiguration(Log.Main.CreateContext("configuration load initial")))
+                if (!ConfigurationManager.Load(Log.Main.CreateContext("configuration load initial")))
                 {
                     return;
                 }
@@ -222,7 +99,7 @@ namespace MikrotikExporter
                                           return;
                                       }
 
-                                      if (LoadConfiguration(Log.Main.CreateContext("configuration load api")))
+                                      if (ConfigurationManager.Load(Log.Main.CreateContext("configuration load api")))
                                       {
                                           response.StatusCode = 200;
                                       }
@@ -294,7 +171,7 @@ namespace MikrotikExporter
 
                 // start the cleanup for stale connections
                 ConnectionManager.InitCleanup(cts.Token);
-                InitConfigurationReload(cts.Token);
+                ConfigurationManager.InitReload(cts.Token);
 
                 Log.Main.Info("start metric server");
                 metricServer = new BlackboxMetricServer(Configuration.Global.Port, Configuration.Global.MetricsUrl);
