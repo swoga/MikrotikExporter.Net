@@ -12,7 +12,7 @@ namespace MikrotikExporter.Configuration
         /// Use different name for label than parameter name
         /// </summary>
         [YamlMember(Alias = "label_name")]
-        public string LabelName { get; private set; }
+        public string LabelName { get; protected set; }
 
         [Required]
         [RegularExpression(@"^(?!__)[a-zA-Z_:][a-zA-Z0-9_:]*$")]

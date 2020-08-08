@@ -48,28 +48,28 @@ namespace MikrotikExporter.Configuration
         /// If empty, default value is used
         /// </summary>
         [YamlMember(Alias = "name")]
-        public string Name { get; set; }
+        public string Name { get; protected set; }
 
         [YamlMember(Alias = "param_type")]
-        public ParamType ParamType { get; set; } = ParamType.Int;
+        public ParamType ParamType { get; protected set; } = ParamType.Int;
 
         /// <summary>
         /// Only relevant for <c>ParamType.Bool</c>
         /// </summary>
         [YamlMember(Alias = "negate")]
-        public bool Negate { get; set; }
+        public bool Negate { get; protected set; }
 
         /// <summary>
         /// Only relevant for <c>ParamType.DateTime</c>
         /// </summary>
         [YamlMember(Alias = "datetime_type")]
-        public DateTimeType? DateTimeType { get; set; }
+        public DateTimeType? DateTimeType { get; protected set; }
 
         /// <summary>
         /// Default value if omitted in the MikroTik API
         /// </summary>
         [YamlMember(Alias = "default")]
-        public string Default { get; set; }
+        public string Default { get; protected set; }
 
         internal string GetDefaultWithSubstitution(Dictionary<string, string> variables)
         {
@@ -91,21 +91,21 @@ namespace MikrotikExporter.Configuration
         /// Maps strings to a value
         /// </summary>
         [YamlMember(Alias="enum_values")]
-        public Dictionary<string, double> EnumValues {get; set; }
+        public Dictionary<string, double> EnumValues {get; protected set; }
 
         /// <summary>
         /// Only relevant for <c>ParamType.Enum</c>
         /// Maps strings to a value
         /// </summary>
         [YamlMember(Alias = "enum_values_re")]
-        public Dictionary<Regex, double> EnumValuesRegex { get; set; }
+        public Dictionary<Regex, double> EnumValuesRegex { get; protected set; }
 
         /// <summary>
         /// Only relevant for <c>ParamType.Enum</c>
         /// Fallback value if string is not found in mapping
         /// </summary>
         [YamlMember(Alias ="enum_fallback")]
-        public double? EnumFallback { get; set; }
+        public double? EnumFallback { get; protected set; }
 
         private static readonly Regex regexTimepan = new Regex(@"(?:(\d+)(w))?(?:(\d+)(d))?(?:(\d+)(h))?(?:(\d+)(m))?(?:(\d+)(s))?", RegexOptions.Compiled);
         private static readonly Regex regexAZ = new Regex(@"[a-zA-Z]", RegexOptions.Compiled);
