@@ -1,5 +1,4 @@
-﻿using Mono.Options;
-using Prometheus;
+﻿using Prometheus;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,33 +6,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using tik4net;
-using YamlDotNet.Serialization;
 
 namespace MikrotikExporter.Configuration
 {
-    public class ModuleCommand
+    public class ModuleCommand : ModuleCommandBase<Label, Metric, ModuleCommand>
     {
-        [YamlMember(Alias = "command")]
-        public string Command { get; private set; }
-
-        [YamlMember(Alias = "command_timeout")]
-        public TimeSpan? CommandTimeout { get; set; }
-
-        [YamlMember(Alias = "prefix")]
-        public string Prefix { get; private set; }
-
-        [YamlMember(Alias = "labels")]
-        public List<Label> Labels { get; private set; } = new List<Label>();
-
-        [YamlMember(Alias = "metrics")]
-        public List<Metric> Metrics { get; private set; } = new List<Metric>();
-
-        [YamlMember(Alias = "variables")]
-        public List<Label> Variables { get; private set; } = new List<Label>();
-
-        [YamlMember(Alias = "sub_commands")]
-        public List<ModuleCommand> SubCommands { get; private set; } = new List<ModuleCommand>();
-
         /// <summary>
         /// Prepares all metrics for this and all subordinate commands
         /// </summary>
