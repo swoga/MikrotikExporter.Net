@@ -45,7 +45,6 @@ namespace MikrotikExporter
             }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
             public Task<bool> Check(Log log)
             {
                 if (!TikConnection.IsOpened)
@@ -88,7 +87,6 @@ namespace MikrotikExporter
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         private static void Cleanup()
         {
             var log = Log.Main.CreateContext("cleanup");
@@ -120,7 +118,6 @@ namespace MikrotikExporter
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2002:Do not lock on objects with weak identity", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public static Connection GetConnection(Log log, string host, string user, string pass)
         {
             string key = $"{host};{user};{pass}";

@@ -32,7 +32,6 @@ namespace MikrotikExporter
         private static HttpListener reloadServer;
         private static Task reloadTask;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         static void Main(string[] args)
         {
             try
