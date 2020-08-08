@@ -50,9 +50,8 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "name")]
         public string Name { get; set; }
 
-        [Required]
         [YamlMember(Alias = "param_type")]
-        public ParamType ParamType { get; set; }
+        public ParamType ParamType { get; set; } = ParamType.Int;
 
         /// <summary>
         /// Only relevant for <c>ParamType.Bool</c>
