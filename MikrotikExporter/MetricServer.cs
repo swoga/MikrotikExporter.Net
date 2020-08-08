@@ -1,4 +1,5 @@
-﻿using Prometheus;
+﻿using Force.DeepCloner;
+using Prometheus;
 using Prometheus.BlackboxMetricServer;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,14 @@ namespace MikrotikExporter
                         }
 
                         var moduleLogger = log.CreateContext($"module {moduleName}");
+
+                        if (targetConfiguration.ModuleExtensions.TryGetValue(moduleName, out var moduleExtension))
+                        {
+                            moduleLogger.Debug1("target has module extension");
+
+                            module = module.DeepClone();
+                            moduleExtension.TryExtendModule(log.CreateContext("target extension"), module);
+                        }
 
                         var tasks = new List<Task>();
                         var iCommand = 1;

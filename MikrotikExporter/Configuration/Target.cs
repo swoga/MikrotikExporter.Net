@@ -28,5 +28,11 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "modules")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         public string[] Modules { get; set; } = System.Array.Empty<string>();
+
+        /// <summary>
+        /// target specific extensions
+        /// </summary>
+        [YamlMember(Alias = "module_extensions")]
+        public Dictionary<string, ModuleExtension> ModuleExtensions { get; protected set; } = new Dictionary<string, ModuleExtension>();
     }
 }
