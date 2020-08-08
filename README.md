@@ -29,6 +29,5 @@ http://127.0.0.1:9436/-/reload (POST)                                     reload
 
 
 ## TODO
-- split main class into seperate files
 - documentation
 - automated tests
