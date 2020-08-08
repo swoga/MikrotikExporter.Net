@@ -219,7 +219,7 @@ namespace MikrotikExporter.Configuration
                             else if (EnumFallback.HasValue)
                             {
                                 value = EnumFallback.Value;
-                                log.Debug1($"'{value}' not found in enum mapping, use fallback value");
+                                log.Debug1($"'{word}' not found in enum mapping, use fallback value");
                                 return true;
                             }
                         }
