@@ -30,6 +30,12 @@ modules:
         - name: write-sect-total
           param_type: int
           metric_type: counter
+        - metric_name: version
+          param_type: int
+          default: 1
+          labels:
+            - name: version
+              param_type: string
     - command: /system/resource/cpu/print
       labels:
         - name: cpu
