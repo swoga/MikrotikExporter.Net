@@ -1,6 +1,6 @@
 ﻿namespace MikrotikExporter.Configuration
 {
-    public enum ParamExtensionEnum
+    public enum ExtensionEnum
     {
         Add,
         Overwrite,

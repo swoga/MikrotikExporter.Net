@@ -7,6 +7,6 @@ namespace MikrotikExporter.Configuration
     {
         [Required]
         [YamlMember(Alias = "extension_action")]
-        public ParamExtensionEnum ExtensionAction { get; protected set; }
+        public ExtensionEnum ExtensionAction { get; protected set; }
     }
 }

@@ -21,7 +21,7 @@ namespace MikrotikExporter.Configuration
         {
             foreach (var labelExtension in extensions)
             {
-                if (labelExtension.ExtensionAction == ParamExtensionEnum.Add)
+                if (labelExtension.ExtensionAction == ExtensionEnum.Add)
                 {
                     log.Debug1($"{labelExtension.ExtensionAction} item '{labelExtension.LabelNameOrName}'");
                     originals.Add(labelExtension);
@@ -41,10 +41,10 @@ namespace MikrotikExporter.Configuration
                         log.Debug1($"{labelExtension.ExtensionAction} item '{labelExtension.LabelNameOrName}'");
                         switch (labelExtension.ExtensionAction)
                         {
-                            case ParamExtensionEnum.Overwrite:
+                            case ExtensionEnum.Overwrite:
                                 originals[labelWithIndex.index] = labelExtension;
                                 break;
-                            case ParamExtensionEnum.Remove:
+                            case ExtensionEnum.Remove:
                                 originals.Remove(labelWithIndex.label);
                                 break;
                             default:
@@ -59,7 +59,7 @@ namespace MikrotikExporter.Configuration
         {
             foreach (var metricExtension in extensions)
             {
-                if (metricExtension.ExtensionAction == ParamExtensionEnum.Add)
+                if (metricExtension.ExtensionAction == ExtensionEnum.Add)
                 {
                     log.Debug1($"{metricExtension.ExtensionAction} item '{metricExtension.MetricNameOrName}'");
                     originals.Add(metricExtension);
@@ -79,10 +79,10 @@ namespace MikrotikExporter.Configuration
                         log.Debug1($"{metricExtension.ExtensionAction} item '{metricExtension.MetricNameOrName}'");
                         switch (metricExtension.ExtensionAction)
                         {
-                            case ParamExtensionEnum.Overwrite:
+                            case ExtensionEnum.Overwrite:
                                 originals[metricWithIndex.index] = metricExtension;
                                 break;
-                            case ParamExtensionEnum.Remove:
+                            case ExtensionEnum.Remove:
                                 originals.Remove(metricWithIndex.metric);
                                 break;
                             default:
