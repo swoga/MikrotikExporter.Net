@@ -8,7 +8,7 @@ namespace MikrotikExporter.Configuration
     public class ModuleFile
     {
         [YamlMember(Alias = "modules")]
-        public Dictionary<string, List<ModuleCommand>> Modules { get; protected set; } = new Dictionary<string, List<ModuleCommand>>();
+        public Dictionary<string, Module> Modules { get; protected set; } = new Dictionary<string, Module>();
 
         [YamlMember(Alias = "module_extensions")]
         public Dictionary<string, List<ModuleCommandExtension>> ModuleExtensions { get; protected set; } = new Dictionary<string, List<ModuleCommandExtension>>();
