@@ -73,18 +73,6 @@ namespace MikrotikExporter
                     return false;
                 }
 
-                foreach (var target in newConfiguration.Targets)
-                {
-                    foreach (var module in target.Value.Modules)
-                    {
-                        if (!newConfiguration.Modules.ContainsKey(module))
-                        {
-                            error = true;
-                            log.Error($"module '{module}' in target '{target.Key}' not found");
-                        }
-                    }
-                }
-
                 // if this is a configuration reload, check if certain immutable options were changed
                 if (Program.Configuration != null)
                 {
