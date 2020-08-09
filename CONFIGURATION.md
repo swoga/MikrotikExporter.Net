@@ -15,7 +15,7 @@ global:
   # prefix for all metric names
   [ prefix: <string> | default = mikrotik ]
   
-  # all *.yml files in this folders are loaded as modules, see next chapter
+  # list of globs loaded as modules, see next chapter
   module_folders:
     [ - <string> ... ]
 

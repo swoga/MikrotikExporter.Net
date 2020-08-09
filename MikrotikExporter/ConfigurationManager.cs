@@ -1,7 +1,10 @@
-﻿using MikrotikExporter.Configuration;
+﻿using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
+using MikrotikExporter.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,37 +29,38 @@ namespace MikrotikExporter
 
                 if (newConfiguration.Global.ModuleFolders != null)
                 {
-                    //load all yaml files from the module folders and add them to the configuration object if the name is not already used
+                    var configurationFolder = Path.GetDirectoryName(Program.configurationFile);
 
-                    foreach (var moduleFolder in newConfiguration.Global.ModuleFolders)
+                    var matcher = new Matcher();
+                    matcher.AddIncludePatterns(newConfiguration.Global.ModuleFolders);
+                    var matcherResult = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(configurationFolder)));
+
+                    foreach (var moduleFilePath in matcherResult.Files.Select(fpm => Path.GetFullPath(fpm.Path, configurationFolder)))
                     {
-                        foreach (var moduleFilePath in Directory.GetFiles(moduleFolder, "*.yml"))
+                        try
                         {
-                            try
+                            using var streamReader = File.OpenText(moduleFilePath);
+                            var moduleFile = YamlDeserializer.Parse<Configuration.ModuleFile>(streamReader);
+
+                            foreach (var kvpModule in moduleFile.Modules)
                             {
-                                using var streamReader = File.OpenText(moduleFilePath);
-                                var moduleFile = YamlDeserializer.Parse<Configuration.ModuleFile>(streamReader);
-
-                                foreach (var kvpModule in moduleFile.Modules)
+                                if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
                                 {
-                                    if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
-                                    {
-                                        error = true;
-                                        log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
-                                        continue;
-                                    }
-
-                                    newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
+                                    error = true;
+                                    log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
+                                    continue;
                                 }
 
-                                error = ParseModuleExtensions(log, newConfiguration.Modules, moduleFile.ModuleExtensions) && error;
+                                newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
                             }
-                            catch (Exception ex)
-                            {
-                                error = true;
-                                log.Error($"error loading '{moduleFilePath}': {ex}");
-                                continue;
-                            }
+
+                            error = ParseModuleExtensions(log, newConfiguration.Modules, moduleFile.ModuleExtensions) && error;
+                        }
+                        catch (Exception ex)
+                        {
+                            error = true;
+                            log.Error($"error loading '{moduleFilePath}': {ex}");
+                            continue;
                         }
                     }
                 }

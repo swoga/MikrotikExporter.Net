@@ -2,7 +2,7 @@ global:
   username: admin
   password: admin
   module_folders:
-    - modules # absolute path to folder or relative to this file
+    - ..\modules\*.yml
 
 targets:
   router1:

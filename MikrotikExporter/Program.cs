@@ -57,10 +57,6 @@ namespace MikrotikExporter
                     return;
                 }
 
-                //change current folder, so relative module paths work correctly
-                var configurationFolder = Path.GetDirectoryName(configurationFile);
-                Directory.SetCurrentDirectory(configurationFolder);
-
                 // inital configuration load
                 if (!ConfigurationManager.Load(Log.Main.CreateContext("configuration load initial")))
                 {
