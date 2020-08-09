@@ -2,9 +2,10 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/swoga/mikrotik-exporter)](https://hub.docker.com/r/swoga/mikrotik-exporter)
 
 Prometheus Exporter written in .NET Core 3.1 to export metrics from MikroTik devices.  
-It is not predetermined which metrics are collected, you can create own modules, please see the examples [here](https://github.com/swoga/MikrotikExporter.Net/blob/master/examples/example.yml) and [here](https://github.com/swoga/MikrotikExporter.Net/blob/master/examples/modules/interface.yml)
+It is not predetermined which metrics are collected, you can create own modules.  
+Please see the examples [here](https://github.com/swoga/MikrotikExporter.Net/blob/master/examples/example.yml) and [here](https://github.com/swoga/MikrotikExporter.Net/blob/master/examples/modules/interface.yml)
 
-[configuration defaults](https://github.com/swoga/MikrotikExporter.Net/tree/master/MikrotikExporter/Configuration)
+[Configuration Specs](https://github.com/swoga/MikrotikExporter.Net/tree/master/CONFIGURATION.md)
 
 ### start arguments
 ```
@@ -26,8 +27,3 @@ http://127.0.0.1:9436/-/reload (POST)                                     reload
 ## uses the following libraries
 - [prometheus-net.BlackboxMetricServer](https://github.com/swoga/prometheus-net.BlackboxMetricServer)
 - [tik4net](https://github.com/danikf/tik4net)
-
-
-## TODO
-- documentation
-- automated tests
