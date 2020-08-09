@@ -29,7 +29,7 @@ global:
   [ configuration_reload_interval: <timespan> | default = 00:01:00 ]
 
 targets:
-  [ - <target> ... ]
+  [ <target> ... ]
 
 modules:
   [ <module> ... ]
@@ -47,23 +47,25 @@ module_extensions:
 
 ## `<target>`
 ```yaml
-# IP or hostname of the target
-host: <string>
-# username for connection to target, overwrites global.username
-[ username: <string> | default = null ]
-# password for connection to target, overwrites global.password
-[ password: <string> | default = null ]
-# labels returned at the discovery endpoint
-discover_labels:
-  [ <string>: <string> ]
-variables:
-  [ <string>: <string> ]
-# list of modules which are executed if ?module=xxx is omitted in the scrape request
-modules:
-  [ - <string> ... ]
-# target specific module extensions
-module_extensions:
-  [ <module_extension> ... ]
+# name of the target, must be unique
+<string>:
+  # IP or hostname of the target
+  host: <string>
+  # username for connection to target, overwrites global.username
+  [ username: <string> | default = null ]
+  # password for connection to target, overwrites global.password
+  [ password: <string> | default = null ]
+  # labels returned at the discovery endpoint
+  discover_labels:
+    [ <string>: <string> ]
+  variables:
+    [ <string>: <string> ]
+  # list of modules which are executed if ?module=xxx is omitted in the scrape request
+  modules:
+    [ - <string> ... ]
+  # target specific module extensions
+  module_extensions:
+    [ <module_extension> ... ]
 ```
 
 ## `<module>`
