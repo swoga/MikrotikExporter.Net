@@ -1,7 +1,7 @@
 global:
   username: admin
   password: admin
-  module_folders:
+  sub_configs:
     - ..\modules\*.yml
 
 targets:

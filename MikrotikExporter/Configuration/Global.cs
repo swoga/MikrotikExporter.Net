@@ -41,9 +41,9 @@ namespace MikrotikExporter.Configuration
         [YamlMember(Alias = "prefix")]
         public string Prefix { get; set; } = "mikrotik";
 
-        [YamlMember(Alias = "module_folders")]
+        [YamlMember(Alias = "sub_configs")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
-        public string[] ModuleFolders { get; set; }
+        public string[] SubConfigs { get; set; }
 
         [YamlMember(Alias = "command_timeout")]
         public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromSeconds(5);

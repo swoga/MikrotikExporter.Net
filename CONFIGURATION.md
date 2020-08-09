@@ -15,8 +15,8 @@ global:
   # prefix for all metric names
   [ prefix: <string> | default = mikrotik ]
   
-  # list of globs loaded as modules, see next chapter
-  module_folders:
+  # list of glob filepaths loaded, see next chapter
+  sub_configs:
     [ - <string> ... ]
 
   # a scrape is aborted if the execution of a command and parsing its values takes longer than this timespan
@@ -29,51 +29,54 @@ global:
   [ configuration_reload_interval: <timespan> | default = 00:01:00 ]
 
 targets:
-  [ <target> ... ]
+  # name of the target must be unique
+  [ <string>: <target> ]
 
 modules:
-  [ <module> ... ]
+  # name of the module must be unique
+  [ <string>: <module> ]
 module_extensions:
-  [ <module_extension> ... ]
+  [ <string>: <module_extension> ]
 ```
 
-## module file
+## sub config file
 ```yaml
-modules: 
-  [ <module> ... ]
+targets:
+  # name of the target must be unique
+  [ <string>: <target> ]
+
+modules:
+  # name of the module must be unique
+  [ <string>: <module> ]
 module_extensions:
-  [ <module_extension> ... ]
+  [ <string>: <module_extension> ]
 ```
 
 ## `<target>`
 ```yaml
-# name of the target, must be unique
-<string>:
-  # IP or hostname of the target
-  host: <string>
-  # username for connection to target, overwrites global.username
-  [ username: <string> | default = null ]
-  # password for connection to target, overwrites global.password
-  [ password: <string> | default = null ]
-  # labels returned at the discovery endpoint
-  discover_labels:
-    [ <string>: <string> ]
-  variables:
-    [ <string>: <string> ]
-  # list of modules which are executed if ?module=xxx is omitted in the scrape request
-  modules:
-    [ - <string> ... ]
-  # target specific module extensions
-  module_extensions:
-    [ <module_extension> ... ]
+# IP or hostname of the target
+host: <string>
+# username for connection to target, overwrites global.username
+[ username: <string> | default = null ]
+# password for connection to target, overwrites global.password
+[ password: <string> | default = null ]
+# labels returned at the discovery endpoint
+discover_labels:
+[ <string>: <string> ]
+variables:
+[ <string>: <string> ]
+# list of modules which are executed if ?module=xxx is omitted in the scrape request
+modules:
+[ - <string> ... ]
+# target specific module extensions
+module_extensions:
+[ <module_extension> ... ]
 ```
 
 ## `<module>`
 ```yaml
-# name of the module, must be unique
-<string>:
-  # a module can be comprised of multiple commands
-  [ - <module_command> ... ]
+# a module can be comprised of multiple commands
+[ - <module_command> ... ]
 ```
 
 ## `<module_command>`

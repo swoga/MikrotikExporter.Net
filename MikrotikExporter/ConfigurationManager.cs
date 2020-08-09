@@ -27,39 +27,51 @@ namespace MikrotikExporter
 
                 bool error = false;
 
-                if (newConfiguration.Global.ModuleFolders != null)
+                if (newConfiguration.Global.SubConfigs != null)
                 {
                     var configurationFolder = Path.GetDirectoryName(Program.configurationFile);
 
                     var matcher = new Matcher();
-                    matcher.AddIncludePatterns(newConfiguration.Global.ModuleFolders);
+                    matcher.AddIncludePatterns(newConfiguration.Global.SubConfigs);
                     var matcherResult = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(configurationFolder)));
 
-                    foreach (var moduleFilePath in matcherResult.Files.Select(fpm => Path.GetFullPath(fpm.Path, configurationFolder)))
+                    foreach (var subConfigFilePath in matcherResult.Files.Select(fpm => Path.GetFullPath(fpm.Path, configurationFolder)))
                     {
                         try
                         {
-                            using var streamReader = File.OpenText(moduleFilePath);
-                            var moduleFile = YamlDeserializer.Parse<Configuration.ModuleFile>(streamReader);
+                            using var streamReader = File.OpenText(subConfigFilePath);
+                            var subConfig = YamlDeserializer.Parse<Configuration.SubConfig>(streamReader);
 
-                            foreach (var kvpModule in moduleFile.Modules)
+                            foreach (var kvpModule in subConfig.Modules)
                             {
                                 if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
                                 {
                                     error = true;
-                                    log.Error($"failed to add module '{kvpModule.Key}' from '{moduleFilePath}', module already exists");
+                                    log.Error($"failed to add module '{kvpModule.Key}' from '{subConfigFilePath}', module already exists");
                                     continue;
                                 }
 
                                 newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
                             }
 
-                            error = ParseModuleExtensions(log, newConfiguration.Modules, moduleFile.ModuleExtensions) && error;
+                            error = ParseModuleExtensions(log, newConfiguration.Modules, subConfig.ModuleExtensions) && error;
+
+                            foreach (var kvpTarget in subConfig.Targets)
+                            {
+                                if (newConfiguration.Targets.ContainsKey(kvpTarget.Key))
+                                {
+                                    error = true;
+                                    log.Error($"failed to add target '{kvpTarget.Key}' from '{subConfigFilePath}', target already exists");
+                                    continue;
+                                }
+
+                                newConfiguration.Targets.Add(kvpTarget.Key, kvpTarget.Value);
+                            }
                         }
                         catch (Exception ex)
                         {
                             error = true;
-                            log.Error($"error loading '{moduleFilePath}': {ex}");
+                            log.Error($"error loading '{subConfigFilePath}': {ex}");
                             continue;
                         }
                     }
