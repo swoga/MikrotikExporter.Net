@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.FileSystemGlobbing;
-using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
-using MikrotikExporter.Configuration;
+﻿using MikrotikExporter.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,50 +31,52 @@ namespace MikrotikExporter
 
                     log.Debug2($"use this for relative paths: '{configurationFolder}'");
 
-                    var matcher = new Matcher();
-                    matcher.AddIncludePatterns(newConfiguration.Global.SubConfigs);
-                    var matcherResult = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(configurationFolder)));
-
-                    foreach (var subConfigFilePath in matcherResult.Files.Select(fpm => Path.GetFullPath(fpm.Path, configurationFolder)))
+                    foreach (var subConfigGlob in newConfiguration.Global.SubConfigs)
                     {
-                        try
+                        var searchPattern = Path.GetFileName(subConfigGlob);
+                        var searchDirectory = Path.GetFullPath(Path.GetDirectoryName(subConfigGlob), configurationFolder);
+
+                        foreach (var subConfigFilePath in Directory.GetFiles(searchDirectory, searchPattern))
                         {
-                            log.Debug1($"load sub config from '{subConfigFilePath}'");
-
-                            using var streamReader = File.OpenText(subConfigFilePath);
-                            var subConfig = YamlDeserializer.Parse<Configuration.SubConfig>(streamReader);
-
-                            foreach (var kvpModule in subConfig.Modules)
+                            try
                             {
-                                if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
+                                log.Debug1($"load sub config from '{subConfigFilePath}'");
+
+                                using var streamReader = File.OpenText(subConfigFilePath);
+                                var subConfig = YamlDeserializer.Parse<Configuration.SubConfig>(streamReader);
+
+                                foreach (var kvpModule in subConfig.Modules)
                                 {
-                                    error = true;
-                                    log.Error($"failed to add module '{kvpModule.Key}' from '{subConfigFilePath}', module already exists");
-                                    continue;
+                                    if (newConfiguration.Modules.ContainsKey(kvpModule.Key))
+                                    {
+                                        error = true;
+                                        log.Error($"failed to add module '{kvpModule.Key}' from '{subConfigFilePath}', module already exists");
+                                        continue;
+                                    }
+
+                                    newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
                                 }
 
-                                newConfiguration.Modules.Add(kvpModule.Key, kvpModule.Value);
-                            }
+                                error = ParseModuleExtensions(log, newConfiguration.Modules, subConfig.ModuleExtensions) && error;
 
-                            error = ParseModuleExtensions(log, newConfiguration.Modules, subConfig.ModuleExtensions) && error;
-
-                            foreach (var kvpTarget in subConfig.Targets)
-                            {
-                                if (newConfiguration.Targets.ContainsKey(kvpTarget.Key))
+                                foreach (var kvpTarget in subConfig.Targets)
                                 {
-                                    error = true;
-                                    log.Error($"failed to add target '{kvpTarget.Key}' from '{subConfigFilePath}', target already exists");
-                                    continue;
-                                }
+                                    if (newConfiguration.Targets.ContainsKey(kvpTarget.Key))
+                                    {
+                                        error = true;
+                                        log.Error($"failed to add target '{kvpTarget.Key}' from '{subConfigFilePath}', target already exists");
+                                        continue;
+                                    }
 
-                                newConfiguration.Targets.Add(kvpTarget.Key, kvpTarget.Value);
+                                    newConfiguration.Targets.Add(kvpTarget.Key, kvpTarget.Value);
+                                }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            error = true;
-                            log.Error($"error loading '{subConfigFilePath}': {ex}");
-                            continue;
+                            catch (Exception ex)
+                            {
+                                error = true;
+                                log.Error($"error loading '{subConfigFilePath}': {ex}");
+                                continue;
+                            }
                         }
                     }
                 }
