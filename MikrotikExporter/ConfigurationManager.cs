@@ -31,6 +31,8 @@ namespace MikrotikExporter
                 {
                     var configurationFolder = Path.GetDirectoryName(Program.configurationFile);
 
+                    log.Debug2($"use this for relative paths: '{configurationFolder}'");
+
                     var matcher = new Matcher();
                     matcher.AddIncludePatterns(newConfiguration.Global.SubConfigs);
                     var matcherResult = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(configurationFolder)));
@@ -39,6 +41,8 @@ namespace MikrotikExporter
                     {
                         try
                         {
+                            log.Debug1($"load sub config from '{subConfigFilePath}'");
+
                             using var streamReader = File.OpenText(subConfigFilePath);
                             var subConfig = YamlDeserializer.Parse<Configuration.SubConfig>(streamReader);
 
