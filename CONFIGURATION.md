@@ -101,30 +101,33 @@ sub_commands:
 ```yaml
 # name of the parameter in the MikroTik API
 [ name: <string> ]
-[ param_type: string, int, bool, timespan, datetime, enum | default = int ]
-# this value is used if the parameter is not found in the API response, the value must be parseable by the selected param_type
+# this value is used if the parameter is not found in the API response
 # the value can be substituted with variables, using the following syntax: {name_of_variable}
 [ default: <string> ]
+# if this value is set, it is used instead of the API response -> static parameter
+# the value can be substituted with variables, using the following syntax: {name_of_variable}
+[ value: <string> ]
+
+# remapping is stopped after the first match in remap_values or remap_values_re
+# 1:1 remapping of values
+remap_values:
+  [ <string>: <string> ]
+# use regex to substitute value (see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/substitutions-in-regular-expressions?redirectedfrom=MSDN)
+remap_values_re:
+  [ - <regex>: <string> ]
 
 # only relevant for param_type=bool
 [ negate: <bool> ]
 
 # only relevant for param_type=datetime
 [ datetime_type: tonow, fromnow ]
-
-# only relevant for param_type=enum
-enum_values:
-  [ <string>: <double> ]
-enum_values_re:
-  [ <regex>: <double> ]
-# value used, if no enum mapping is found
-[ enum_fallback: <double> ]
 ```
 
 ## `<label>`
 ```yaml
 # derives from param
 <param>
+[ param_type: string, int, bool, timespan, datetime | default = int ]
 # either this or param.name must be set
 [ label_name: <string> | default = <param.name> ]
 ```
@@ -133,6 +136,7 @@ enum_values_re:
 ```yaml
 # derives from param
 <param>
+[ param_type: int, bool, timespan, datetime | default = int ]
 # either this or param.name must be set
 # the full name is then built with this logic: <global.prefix>_<module.prefix OR name of the module>_<metric_name OR param.name>
 [ metric_name: <string> | default = <param.name> ]
