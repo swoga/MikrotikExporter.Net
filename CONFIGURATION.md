@@ -162,3 +162,6 @@ extension_action: add, overwrite, remove
 <metric>
 extension_action: add, overwrite, remove
 ```
+
+# parameter flow
+![mermaid-diagram-20200827213412](https://user-images.githubusercontent.com/3697291/91486859-240c6600-e8ad-11ea-95b6-2a751952f3e6.png)
