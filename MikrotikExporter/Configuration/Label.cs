@@ -21,21 +21,28 @@ namespace MikrotikExporter.Configuration
 
         internal string AsString(Log log, ITikReSentence tikSentence, Dictionary<string, string> variables)
         {
-            log.Debug2("try to get value");
-
-            if (ParamType == ParamType.String && Name != null && tikSentence.TryGetResponseField(Name, out var word))
+            if (ParamType == ParamType.String)
             {
-                log.Debug2("got as string from api response");
-                return word;
-            }
-            else if (ParamType != ParamType.String && TryGetValue(log, tikSentence, variables, out var value))
-            {
-                return value.ToString(CultureInfo.InvariantCulture);
+                if (PreprocessValue(log, tikSentence, variables, out var word))
+                {
+                    return word;
+                }
+                else
+                {
+                    return Substitute(Default, variables) ?? "";
+                }
             }
             else
             {
-                log.Debug2("use default value");
-                return GetDefaultWithSubstitution(variables) ?? "";
+                // TryGetValue also handles default values for non-string parameters
+                if (TryGetValue(log, tikSentence, variables, out var value))
+                {
+                    return value.ToString(CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return "";
+                }
             }
         }
     }
