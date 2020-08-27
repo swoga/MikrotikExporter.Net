@@ -12,7 +12,8 @@ namespace MikrotikExporter
         internal static T Parse<T>(StreamReader streamReader)
         {
             var deserializer = new DeserializerBuilder();
-            deserializer.WithTypeConverter(new YamlTypeConverter());
+            deserializer.WithTypeConverter(new YamlTypeConverterRegex());
+            deserializer.WithTypeConverter(new YamlTypeConverterTupleRegexString());
             deserializer.WithNodeDeserializer(inner => new ValidatingNodeDeserializer(inner), s => s.InsteadOf<ObjectNodeDeserializer>());
             return deserializer.Build().Deserialize<T>(streamReader);
         }

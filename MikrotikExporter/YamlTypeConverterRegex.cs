@@ -6,7 +6,7 @@ using YamlDotNet.Serialization;
 
 namespace MikrotikExporter
 {
-    class YamlTypeConverter : IYamlTypeConverter
+    class YamlTypeConverterRegex : IYamlTypeConverter
     {
         public bool Accepts(Type type)
         {
