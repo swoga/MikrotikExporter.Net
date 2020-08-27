@@ -9,7 +9,7 @@ modules:
           labels:
             - label_name: sensor
               param_type: string
-              default: cpu
+              value: cpu
         - name: power-consumption
           param_type: int
           metric_type: gauge
@@ -20,7 +20,7 @@ modules:
           labels:
             - label_name: sensor
               param_type: string
-              default: board1
+              value: board1
         - name: board-temperature2
           metric_name: temperature
           param_type: int
@@ -28,14 +28,14 @@ modules:
           labels:
             - label_name: sensor
               param_type: string
-              default: board2
+              value: board2
         - name: temperature
           param_type: int
           metric_type: gauge
           labels:
             - label_name: sensor
               param_type: string
-              default: general
+              value: general
         - name: voltage
           metric_name: psu_voltage
           param_type: int
@@ -43,7 +43,7 @@ modules:
           labels:
             - label_name: psu
               param_type: string
-              default: 1
+              value: 0
         - name: psu1-voltage
           metric_name: psu_voltage
           param_type: int
@@ -51,7 +51,7 @@ modules:
           labels:
             - label_name: psu
               param_type: string
-              default: 1
+              value: 1
         - name: psu2-voltage
           metric_name: psu_voltage
           param_type: int
@@ -59,7 +59,7 @@ modules:
           labels:
             - label_name: psu
               param_type: string
-              default: 2
+              value: 2
         - name: psu1-current
           metric_name: psu_current
           param_type: int
@@ -67,7 +67,7 @@ modules:
           labels:
             - label_name: psu
               param_type: string
-              default: 1
+              value: 1
         - name: psu2-current
           metric_name: psu_current
           param_type: int
@@ -75,7 +75,7 @@ modules:
           labels:
             - label_name: psu
               param_type: string
-              default: 2
+              value: 2
         - name: psu1-state
           metric_name: psu_state
           param_type: enum
@@ -99,7 +99,7 @@ modules:
           labels:
             - label_name: psu
               param_type: string
-              default: 2
+              value: 2
         - name: fan1-speed
           metric_name: fan_speed
           param_type: int
@@ -107,7 +107,7 @@ modules:
           labels:
             - label_name: fan
               param_type: string
-              default: 1
+              value: 1
         - name: fan2-speed
           metric_name: fan_speed
           param_type: int
@@ -115,7 +115,7 @@ modules:
           labels:
             - label_name: fan
               param_type: string
-              default: 2
+              value: 2
         - name: fan3-speed
           metric_name: fan_speed
           param_type: int
@@ -123,7 +123,7 @@ modules:
           labels:
             - label_name: fan
               param_type: string
-              default: 3
+              value: 3
         - name: fan4-speed
           metric_name: fan_speed
           param_type: int
@@ -131,4 +131,4 @@ modules:
           labels:
             - label_name: fan
               param_type: string
-              default: 4
+              value: 4

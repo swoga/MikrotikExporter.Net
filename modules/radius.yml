@@ -16,7 +16,7 @@ modules:
           labels:
             - label_name: address
               param_type: string
-              default: "{address}"
+              value: "{address}"
           metrics:
             - name: requests
               param_type: int
