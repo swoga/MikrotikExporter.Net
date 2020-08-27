@@ -78,23 +78,21 @@ modules:
               value: 2
         - name: psu1-state
           metric_name: psu_state
-          param_type: enum
-          enum_values:
+          param_type: int
+          remap_values:
             ok: 1
             fail: 0
-          enum_fallback: -1
           metric_type: gauge
           labels:
             - label_name: psu
               param_type: string
-              default: 1
+              value: 1
         - name: psu2-state
           metric_name: psu_state
-          param_type: enum
-          enum_values:
+          param_type: int
+          remap_values:
             ok: 1
             fail: 0
-          enum_fallback: -1
           metric_type: gauge
           labels:
             - label_name: psu
