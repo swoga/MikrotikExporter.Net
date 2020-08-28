@@ -135,8 +135,11 @@ namespace MikrotikExporter.Configuration
                 return false;
             }
 
-            if (RemapValues != null && RemapValues.TryGetValue(word, out word))
+            string remappedWord = null;
+            if (RemapValues != null && RemapValues.TryGetValue(word, out remappedWord))
             {
+                word = remappedWord;
+
                 if (word == null)
                 {
                     log.Debug2("remapped to null");
@@ -153,6 +156,7 @@ namespace MikrotikExporter.Configuration
                     if (firstMatch.Item2 == null)
                     {
                         log.Debug2("regex remapped to null");
+                        word = null;
                         return false;
                     }
                     word = firstMatch.Item1.Replace(word, firstMatch.Item2);
