@@ -36,8 +36,8 @@ namespace MikrotikExporter
 
                 OptionSet optionSet = new OptionSet {
                     { "c|config=", "path to the yml configuration", c => configurationFile = Path.GetFullPath(c) },
-                    { "v", "enable verbose output", v => Log.PrintDebug1 = v != null},
-                    { "vv", "enable more verbose output", v => Log.PrintDebug2 = v != null},
+                    { "v", "enable verbose output", v => { if (v != null) { Log.Main.Level = Log.LogLevel.Debug1; } } },
+                    { "vv", "enable more verbose output", v => { if (v != null) { Log.Main.Level = Log.LogLevel.Debug2; } } },
                     { "h|help", "show this help", h => showHelp = h != null }
                 };
 

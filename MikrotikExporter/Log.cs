@@ -8,8 +8,13 @@ namespace MikrotikExporter
 {
     public class Log
     {
-        public static bool PrintDebug1 { get; set; } = false;
-        public static bool PrintDebug2 { get; set; } = false;
+        public enum LogLevel
+        {
+            Error,
+            Debug1,
+            Debug2
+        }
+        public LogLevel Level { get; set; }
         public static Log Main { get; } = new Log(Array.Empty<string>());
         private static readonly object consoleLock = new object();
         private readonly string[] contexts;
@@ -33,12 +38,15 @@ namespace MikrotikExporter
 
         public void Error(string message)
         {
-            Write("ERROR", ConsoleColor.Red, message);
+            if (Level >= LogLevel.Error)
+            {
+                Write("ERROR", ConsoleColor.Red, message);
+            }
         }
 
         public void Debug1(string message)
         {
-            if (PrintDebug1 || PrintDebug2)
+            if (Level >= LogLevel.Debug1)
             {
                 Write("DEBUG1", ConsoleColor.Yellow, message);
             }
@@ -46,7 +54,7 @@ namespace MikrotikExporter
 
         public void Debug2(string message)
         {
-            if (PrintDebug2)
+            if (Level >= LogLevel.Debug2)
             {
                 Write("DEBUG2", ConsoleColor.Cyan, message);
             }
