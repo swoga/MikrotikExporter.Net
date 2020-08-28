@@ -109,6 +109,7 @@ sub_commands:
 [ value: <string> ]
 
 # remapping is stopped after the first match in remap_values or remap_values_re
+# remapping to null without quotes, stops further processing of this parameter
 # 1:1 remapping of values
 remap_values:
   [ <string>: <string> ]
