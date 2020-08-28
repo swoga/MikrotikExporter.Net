@@ -21,7 +21,7 @@ namespace MikrotikExporter
             var value = parser.Consume<Scalar>();
             parser.Consume<MappingEnd>();
 
-            return new Tuple<Regex, string>(new Regex(regex.Value), value.Value);
+            return new Tuple<Regex, string>(new Regex(regex.Value), (value.IsPlainImplicit && value.Value == "null") ? null : value.Value);
         }
 
         public void WriteYaml(IEmitter emitter, object value, Type type)

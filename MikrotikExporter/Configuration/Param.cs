@@ -137,15 +137,25 @@ namespace MikrotikExporter.Configuration
 
             if (RemapValues != null && RemapValues.TryGetValue(word, out word))
             {
+                if (word == null)
+                {
+                    log.Debug2("remapped to null");
+                    return false;
+                }
                 log.Debug2($"remapped to '{word}'");
             }
             else
             {
                 var tmpWord = word;
-                var matchedValue = RemapValuesRegex?.Where(kvp => kvp.Item1.IsMatch(tmpWord))?.Select(kvp => kvp.Item1.Replace(tmpWord, kvp.Item2))?.FirstOrDefault();
-                if (matchedValue != null)
+                var firstMatch = RemapValuesRegex?.Where(kvp => kvp.Item1.IsMatch(tmpWord))?.FirstOrDefault();
+                if (firstMatch != null)
                 {
-                    word = matchedValue;
+                    if (firstMatch.Item2 == null)
+                    {
+                        log.Debug2("regex remapped to null");
+                        return false;
+                    }
+                    word = firstMatch.Item1.Replace(word, firstMatch.Item2);
                     log.Debug2($"regex remapped to '{word}'");
                 }
             }
