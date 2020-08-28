@@ -117,7 +117,7 @@ namespace MikrotikExporter.Configuration
 
             // remove potential units
             word = regexAZ.Replace(word, "");
-            return double.TryParse(word, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+            return double.TryParse(word, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
         }
 
         internal bool PreprocessValue(Log log, ITikReSentence tikSentence, Dictionary<string, string> variables, out string word)
