@@ -29,7 +29,7 @@ namespace MikrotikExporter.Configuration
                 else
                 {
                     //search all labels/variables with the same name (normally this should be only one)
-                    var labelsWithIndex = originals.Where((label) => label.LabelNameOrName == labelExtension.LabelNameOrName).Select((label, index) => new { label, index }).ToArray();
+                    var labelsWithIndex = originals.Select((label, index) => new { label, index }).Where((labelWithIndex) => labelWithIndex.label.LabelNameOrName == labelExtension.LabelNameOrName).ToArray();
 
                     if (labelsWithIndex.Length == 0)
                     {
@@ -67,7 +67,7 @@ namespace MikrotikExporter.Configuration
                 else
                 {
                     //search all metrics with the same name (normally this should be only one)
-                    var metricsWithIndex = originals.Where((metric) => metric.MetricNameOrName == metricExtension.MetricNameOrName).Select((metric, index) => new { metric, index }).ToArray();
+                    var metricsWithIndex = originals.Select((metric, index) => new { metric, index }).Where((metricWithIndex) => metricWithIndex.metric.MetricNameOrName == metricExtension.MetricNameOrName).ToArray();
 
                     if (metricsWithIndex.Length == 0)
                     {
