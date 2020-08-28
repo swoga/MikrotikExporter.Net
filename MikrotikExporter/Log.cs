@@ -15,7 +15,7 @@ namespace MikrotikExporter
             Debug2
         }
         public LogLevel Level { get; set; }
-        public static Log Main { get; } = new Log(Array.Empty<string>());
+        public static Log Main { get; } = new Log(Array.Empty<string>(), LogLevel.Error);
         private static readonly object consoleLock = new object();
         private readonly string[] contexts;
 
@@ -60,14 +60,15 @@ namespace MikrotikExporter
             }
         }
 
-        private Log(string[] contexts)
+        private Log(string[] contexts, LogLevel level)
         {
             this.contexts = contexts;
+            Level = level;
         }
 
-        public Log CreateContext(string context)
+        public Log CreateContext(string context, LogLevel? forceLevel = null)
         {
-            return new Log(contexts.Concat(new string[] { context }).ToArray());
+            return new Log(contexts.Concat(new string[] { context }).ToArray(), forceLevel ?? Level);
         }
     }
 }
