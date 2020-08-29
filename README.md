@@ -24,6 +24,10 @@ http://127.0.0.1:9436/discover                                            return
 http://127.0.0.1:9436/-/reload (POST)                                     reloads all configuration files
 ```
 
+The `/metrics` endpoint also accepts a query string `?debug=x` to set a specific log level and return the logs in the response.  
+Accepted values for `x` are `0` for errors only, `1` for debug1, `2` for debug2.
+
+
 ## uses the following libraries
 - [prometheus-net.BlackboxMetricServer](https://github.com/swoga/prometheus-net.BlackboxMetricServer)
 - [tik4net](https://github.com/danikf/tik4net)

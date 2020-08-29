@@ -21,7 +21,32 @@ namespace MikrotikExporter
             metricServer.AddScrapeCallback(async (cancel, factory, queryStrings) =>
             {
                 var requestId = Interlocked.Increment(ref requestCounter);
-                var log = Log.Main.CreateContext($"request {requestId}");
+
+                bool showLogOutput = false;
+                Log.LogLevel? logLevel = null;
+                bool invalidLogLevel = false;
+                string logLevelStr = queryStrings["debug"];
+
+                if (logLevelStr != null)
+                {
+                    showLogOutput = true;
+
+                    if (Enum.TryParse(typeof(Log.LogLevel), logLevelStr, out object logLevelObj))
+                    {
+                        logLevel = (Log.LogLevel)logLevelObj;
+                    }
+                    else
+                    {
+                        invalidLogLevel = true;
+                    }
+                }
+
+                var log = Log.Main.CreateContext($"request {requestId}", logLevel, showLogOutput);
+                if (invalidLogLevel)
+                {
+                    log.Error($"invalid log level '{logLevelStr}' set");
+                }
+
                 // create a reference to the currently loaded configuration, to avoid changes during a scrape
                 var localConfiguration = Program.Configuration;
 
@@ -98,12 +123,17 @@ namespace MikrotikExporter
                 catch (Exception ex)
                 {
                     log.Error(ex.ToString());
-                    throw;
+                    if (!showLogOutput)
+                    {
+                        throw;
+                    }
                 }
                 finally
                 {
                     log.Debug1("end scrape");
                 }
+
+                return showLogOutput ? string.Join("\r\n", log.Logs) : null;
             });
 
             return metricServer;
