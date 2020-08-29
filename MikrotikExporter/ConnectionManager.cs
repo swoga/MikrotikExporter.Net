@@ -66,15 +66,7 @@ namespace MikrotikExporter
                         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
                         var command = TikConnection.CreateCommand("/system/identity/print");
-                        command.ExecuteAsync(delegate
-                        {
-                            log.Debug1("connection test successful");
-                            tcs.SetResult(true);
-                        }, delegate
-                        {
-                            log.Debug1("connection test unsuccessful");
-                            tcs.SetResult(false);
-                        });
+                        command.ExecuteScalar();
 
                         return tcs.Task;
                     }
