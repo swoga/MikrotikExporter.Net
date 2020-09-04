@@ -90,7 +90,7 @@ namespace MikrotikExporter.Configuration
         public List<Tuple<Regex, string>> RemapValuesRegex { get; protected set; }
 
         private static readonly Regex regexTimepan = new Regex(@"(?:(\d+)(w))?(?:(\d+)(d))?(?:(\d+)(h))?(?:(\d+)(m))?(?:(\d+)(s))?", RegexOptions.Compiled);
-        private static readonly Regex regexAZ = new Regex(@"[a-zA-Z]$", RegexOptions.Compiled);
+        private static readonly Regex regexAZ = new Regex(@"[a-zA-Z]+$", RegexOptions.Compiled);
 
         internal static string Substitute(string value, Dictionary<string, string> variables)
         {
