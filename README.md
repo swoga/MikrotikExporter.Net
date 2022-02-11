@@ -1,5 +1,6 @@
+**MikrotikExporter.Net is no longer under development, as I have rewritten it in Golang! -> https://github.com/swoga/mikrotik-exporter**
+
 # Prometheus Exporter for MikroTik devices
-[![Docker Pulls](https://img.shields.io/docker/pulls/swoga/mikrotik-exporter)](https://hub.docker.com/r/swoga/mikrotik-exporter)
 
 Prometheus Exporter written in .NET Core 3.1 to export metrics from MikroTik devices.  
 It is not predetermined which metrics are collected, you can create own modules.  
